@@ -1,7 +1,6 @@
 import { createAppContainer,createSwitchNavigator } from 'react-navigation';
 import HomeScreen from "../screens/HomeScreen";
-import StackNavigator from './StackNavigator';
-
+import StackNavigator from './StackNavigator'
 const SwitchNavigator = createSwitchNavigator(
   {
     Auth: StackNavigator,

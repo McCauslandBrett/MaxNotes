@@ -82,7 +82,7 @@ export default class LoginScreen extends React.Component {
                     <Input color={theme.COLORS.INFO} 
                      style={{ borderColor: theme.COLORS.INFO }} 
                      placeholder="password" password viewPass />
-                     <Button round uppercase color={"#50C7C7"}>Login</Button>
+                     <Button onPress={()=>{this.props.navigation.navigate("Home")}} round uppercase color={"#50C7C7"}>Login</Button>
                      
                      <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Signup')}} style={{paddingVertical: theme.SIZES.BASE}}>
                         <Text h5 color={"#50C7C7"}>Create Account</Text>

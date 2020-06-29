@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, Dimensions } from 'react-native'
+import { View, StyleSheet, Dimensions,ImageBackground } from 'react-native'
 const { height, width } = Dimensions.get('screen');
 
 import { TouchableOpacity, FlatList, 
@@ -13,13 +13,16 @@ import {updateSquat,updateDeadlift,updateBench,
           updateClean,updateSnatch} from "../actions/maxes"
 import { bindActionCreators } from 'redux'
 
-class HomeScreen extends Component {
 
- 
+class HomeScreen extends Component {
 
   render() {
     return (
-      <Block flex safearea style={styles.margins}>
+      <ImageBackground
+      source={require('../../assets/images/BackHome/homeback2.png')}
+      style={styles.image}
+      >
+        <Block flex safearea style={styles.margins}>
         <Block middle style={{marginVertical:30}}>
           <Text h2>MaxList</Text>
         </Block>
@@ -57,7 +60,7 @@ class HomeScreen extends Component {
         <Text h5 bold>Clean</Text>
         <TextInput
           value = {this.props.maxes.clean}
-          onChangeText = {input => this.props.updateClean(input)}
+          onChangeText = {input => (console.log(this.props.maxes))}
           placeholder = 'Clean'
           placeholderTextColor= 'gray'
        />
@@ -71,9 +74,10 @@ class HomeScreen extends Component {
           placeholder = 'Snatch'
           placeholderTextColor= 'gray'
        />
+
        </Block>
        <Block middle center flex style={styles.bottom}>
-          <Button style={{marginVertical:20}} 
+          <Button onPress={()=>{}}style={{marginVertical:20}} 
                   round uppercase color={"#50C7C7"}>Clear
           </Button>
           <Button style={{marginVertical:20,alignContent:'center'}}
@@ -82,6 +86,8 @@ class HomeScreen extends Component {
        </Block>
        
       </Block>
+      </ImageBackground>
+      
     )
   }
 }
@@ -98,6 +104,11 @@ const mapDispatchToProps =(dispatch) => {
   
 }
 const styles = StyleSheet.create({
+  image: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center"
+  },
   margins: {
     width: width - theme.SIZES.BASE * 2,
     paddingVertical: theme.SIZES.BASE,

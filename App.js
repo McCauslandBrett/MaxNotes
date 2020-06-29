@@ -5,11 +5,34 @@ import SwitchNavigator from './src/navigation/SwitchNavigator.js'
 import {Provider} from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native';
 import rootReducer from './src/reducer/index'
-
+import { AppLoading, DangerZone } from "expo"
+import * as Font from "expo-font"
 const store = createStore(rootReducer);
 
 export default class App extends Component {
+  constructor(props) {
+		super(props)
+		this.state = {
+			fontsReady: false,
+		}
+  }
+  componentDidMount() {
+		this.initProjectFonts()
+  }
+  
+  async initProjectFonts() {
+	
+		await Font.loadAsync({
+			"Base02": require("./assets/fonts/Base02.ttf"),
+		})
+		this.setState({
+			fontsReady: true,
+		})
+	}
   render() {
+    if(!this.state.fontsReady){
+       return (<AppLoading />); 
+    }
     return (
       
        <Provider store={store}>

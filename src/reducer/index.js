@@ -4,7 +4,7 @@ import{combineReducers} from 'redux'
 const maxes = (state = INITIAL_MAXES, action) => {
     switch (action.type) {
         case 'DEAD':
-            return {...state, deadlift:action.payload};
+            return {...state, deadlift: action.payload};
         case 'SQUAT':
              return {...state, squat:action.payload};
         case 'BENCH':
@@ -14,7 +14,7 @@ const maxes = (state = INITIAL_MAXES, action) => {
         case 'SNATCH':
               return {...state, snatch:action.payload};
         case 'CLEAR':
-              return [];
+              return INITIAL_MAXES;
         default:
             return state;
     }

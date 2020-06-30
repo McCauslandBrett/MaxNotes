@@ -23,60 +23,68 @@ class HomeScreen extends Component {
       style={styles.image}
       >
         <Block flex safearea style={styles.margins}>
-        <Block middle style={{marginVertical:30}}>
-          <Text h2>MaxList</Text>
+        <Block middle style={{marginVertical:20}}>
+          <Text style={{fontFamily: "Base02",fontSize: 70}}>Maxes</Text>
         </Block>
 
         <Block row space={'evenly'} style={{marginVertical:20}}>
-        <Text h5 bold>Squat</Text>
+        <Text style={{fontFamily: "Base02",fontSize: 30}}>Squat</Text>
         <TextInput
+          style={{fontFamily: "Base02",fontSize: 30}}
           value = {this.props.maxes.squat}
           onChangeText = {input => this.props.updateSquat(input)}
-          placeholder = 'Squat'
+          placeholder = '0'
           placeholderTextColor= 'gray'
        />
        </Block>
        <Block row space={'evenly'} style={{marginVertical:20}}>
-        <Text h5 bold>Deadlift</Text>
+        <Text style={{fontFamily: "Base02",fontSize: 30}}>Deadlift</Text>
         <TextInput
           value = {this.props.maxes.deadlift}
           onChangeText = {input => this.props.updateDeadlift(input)}
-          placeholder = 'Squat'
+          placeholder = '0'
           placeholderTextColor= 'gray'
+          style={{fontFamily: "Base02",fontSize: 30}}
        />
        </Block>
 
        <Block row space={'evenly'} style={{marginVertical:20}} >
-        <Text h5 bold>Bench</Text>
+        <Text style={{fontFamily: "Base02",fontSize: 30}}>Bench</Text>
         <TextInput
+          style={{fontFamily: "Base02",fontSize: 30}}
           value = {this.props.maxes.bench}
           onChangeText = {input => this.props.updateBench(input)}
-          placeholder = 'Bench'
+          placeholder = '0'
           placeholderTextColor= 'gray'
        />
        </Block>
 
        <Block row space={'evenly'} style={{marginVertical:20}}>
-        <Text h5 bold>Clean</Text>
+        <Text style={{fontFamily: "Base02",fontSize: 30}}>Clean</Text>
         <TextInput
+          style={{fontFamily: "Base02",fontSize: 30}}
           value = {this.props.maxes.clean}
           onChangeText = {input => (console.log(this.props.maxes))}
-          placeholder = 'Clean'
+          placeholder = '0'
           placeholderTextColor= 'gray'
        />
        </Block>
 
        <Block row space={'evenly'} style={{marginVertical:20}}>
-        <Text h5 bold>Snatch</Text>
+        <Text style={{fontFamily: "Base02",fontSize: 30}}>Snatch</Text>
         <TextInput
+          style={{fontFamily: "Base02",fontSize: 30}}
           value = {this.props.maxes.snatch}
           onChangeText = {input => this.props.updateSnatch(input)}
-          placeholder = 'Snatch'
+          placeholder = '0'
           placeholderTextColor= 'gray'
        />
 
        </Block>
-       <Block middle center flex style={styles.bottom}>
+       
+       
+      </Block>
+      <Block middle center flex style={styles.bottom}>
           <Button onPress={()=>{}}style={{marginVertical:20}} 
                   round uppercase color={"#50C7C7"}>Clear
           </Button>
@@ -84,8 +92,6 @@ class HomeScreen extends Component {
                   round uppercase color={"#50C7C7"}>Save
           </Button>
        </Block>
-       
-      </Block>
       </ImageBackground>
       
     )

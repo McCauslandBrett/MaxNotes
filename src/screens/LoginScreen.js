@@ -1,5 +1,7 @@
 import React from "react"
-import { Animated, Easing, ImageBackground,TouchableOpacity,Dimensions, StyleSheet, View } from "react-native"
+import { Animated, Easing, ImageBackground,
+	TouchableOpacity,Dimensions, StyleSheet, 
+	View } from "react-native"
 import {Input,Text,theme,Button,Block} from 'galio-framework'
 const { height, width } = Dimensions.get('screen');
 
@@ -50,7 +52,7 @@ export default class LoginScreen extends React.Component {
 	
 		return (
 			<ImageBackground
-			source={require('../../assets/images/SignBack/signback2.png')}
+			source={require('../../assets/images/Auth/Authback.png')}
 			style={styles.image}
 			>
 				<View style={{flex:1}}>

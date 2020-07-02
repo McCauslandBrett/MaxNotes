@@ -12,9 +12,17 @@ import { connect } from 'react-redux'
 import {updateSquat,updateDeadlift,updateBench,
           updateClean,updateSnatch} from "../actions/maxes"
 import { bindActionCreators } from 'redux'
-
+import QModal from "rn-qmodal";
 
 class HomeScreen extends Component {
+  state={
+        visible:false
+      };
+      toggleOverlay = () =>{
+        this.setState({
+          visible:!this.state.visible
+        });
+      }
 
   render() {
     return (
@@ -22,6 +30,14 @@ class HomeScreen extends Component {
       source={require('../../assets/images/BackHome/homeback2.png')}
       style={styles.image}
       >
+        <QModal
+          animation={'fade'}
+          card half backdrop
+          visible={this.state.visible}
+          toggle={this.toggleOverlay}
+         >
+          <Text>Hello</Text>
+        </QModal>
         <Block flex safearea style={styles.margins}>
         <Block middle style={{marginVertical:20}}>
           <Text style={{fontFamily: "Base02",fontSize: 70}}>Maxes</Text>
@@ -85,9 +101,6 @@ class HomeScreen extends Component {
        
       </Block>
       <Block middle center flex style={styles.bottom}>
-          <Button onPress={()=>{}}style={{marginVertical:20}} 
-                  round uppercase color={"#50C7C7"}>Clear
-          </Button>
           <Button style={{marginVertical:20,alignContent:'center'}}
                   round uppercase color={"#50C7C7"}>Save
           </Button>

@@ -1,0 +1,10 @@
+type Maxes @model {
+  id: ID!
+  email: String!
+  bench: String,
+  squat:String,
+  deadlift:String,
+  clean:String,
+  snatch:String,
+
+}

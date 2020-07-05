@@ -8,8 +8,12 @@ import rootReducer from './src/reducer/index'
 import { AppLoading, DangerZone } from "expo"
 import * as Font from "expo-font"
 const store = createStore(rootReducer);
+import Amplify from 'aws-amplify'
+import config from './aws-exports'
+Amplify.configure(config);
+import { withAuthenticator } from 'aws-amplify-react-native'
 
-export default class App extends Component {
+class App extends Component {
   constructor(props) {
 		super(props)
 		this.state = {
@@ -44,3 +48,4 @@ export default class App extends Component {
     )
   }
 }
+export default App;

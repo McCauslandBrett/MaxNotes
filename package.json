@@ -9,8 +9,11 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.5",
+    "@react-native-community/netinfo": "^5.9.4",
     "@react-navigation/native": "^5.6.1",
     "@react-navigation/stack": "^5.6.2",
+    "aws-amplify": "^3.0.18",
+    "aws-amplify-react-native": "^4.2.1",
     "expo": "~36.0.0",
     "galio-framework": "^0.6.3",
     "react": "~16.9.0",

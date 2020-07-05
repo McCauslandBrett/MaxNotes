@@ -12,7 +12,7 @@ import { connect } from 'react-redux'
 import {updateSquat,updateDeadlift,updateBench,
           updateClean,updateSnatch} from "../actions/maxes"
 import { bindActionCreators } from 'redux'
-import QModal from "rn-qmodal";
+
 
 class HomeScreen extends Component {
   state={
@@ -30,14 +30,7 @@ class HomeScreen extends Component {
       source={require('../../assets/images/BackHome/homeback2.png')}
       style={styles.image}
       >
-        <QModal
-          animation={'fade'}
-          card half backdrop
-          visible={this.state.visible}
-          toggle={this.toggleOverlay}
-         >
-          <Text>Hello</Text>
-        </QModal>
+        
         <Block flex safearea style={styles.margins}>
         <Block middle style={{marginVertical:20}}>
           <Text style={{fontFamily: "Base02",fontSize: 70}}>Maxes</Text>

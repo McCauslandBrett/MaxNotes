@@ -4,11 +4,17 @@ import { connect } from 'react-redux';
 import {Input,Text,theme,Button,Block} from 'galio-framework'
 // import {} from "../actions/maxes";
 const { height, width } = Dimensions.get('screen');
-
+import Amplify, {Auth} from "aws-amplify";
 import { bindActionCreators } from 'redux';
 
 class SignupScreen extends Component {
     static navigationOptions = ({ navigation }) => {
+		state={
+			username:'',
+			password:'',
+			email:'',
+			confirmationCode:'',
+		}
 	
 		const { params = {} } = navigation.state
 		return {
@@ -16,6 +22,22 @@ class SignupScreen extends Component {
 				headerLeft: null,
 				headerRight: null,
 			}
+	}
+	signup(){
+		Auth.signUp({
+			email:this.state.email,
+			username:this.state.email,
+			password:this.state.password
+		})
+		.then(()=> {console.log('signed up')})
+		.catch(err => console.log('error sign up',err))
+	}
+	confirmSignUp() {
+		Auth.confirmSignUp(this.state.email,this.state.confirmationCode)
+		.then(()=> {console.log('succesful confirm sign up')
+		this.props.navigation.navigate("Home")
+		})
+		.catch(err => console.log('error confirmation signup',err))
 	}
 
 	constructor(props) {
@@ -27,7 +49,6 @@ class SignupScreen extends Component {
 	}
 
 	componentDidMount() {
-	
 		this.startAnimationOne()
 	}
 
@@ -48,7 +69,24 @@ class SignupScreen extends Component {
 			toValue: 1,
 		})])]).start()
 	}
- 
+	onChangeEmail(text){
+		this.setState({
+			email:text
+		})
+		console.log(this.state.email)
+	}
+	onChangePassword(text){
+		this.setState({
+			password:text
+		})
+		console.log(this.state.password)
+	}
+	onChangeCode(text){
+		this.setState({
+			confirmationCode:text
+		})
+		console.log(this.state.confirmationCode)
+	}
     render() {
         return (
             <ImageBackground
@@ -92,18 +130,33 @@ class SignupScreen extends Component {
                     paddingVertical: theme.SIZES.BASE,
                     justifyContent: 'flex-end',
                     marginBottom: 25}}>
-                <Input placeholder="username" color={theme.COLORS.INFO} 
+
+					<Input placeholder="email" 
+				
+					color={theme.COLORS.INFO} 
                     style={{ borderColor: theme.COLORS.INFO }} 
-                    placeholderTextColor={theme.COLORS.INFO}
+					placeholderTextColor={theme.COLORS.INFO}
+					onChangeText={text => this.onChangeEmail(text)}
+      				value={this.state.email}
                     />
-                    <Input color={theme.COLORS.INFO} 
+					<Input color={theme.COLORS.INFO} 
+					 value={this.state.password}
                      style={{ borderColor: theme.COLORS.INFO }} 
-                     placeholder="password" password viewPass />
-                     <Button onPress={()=>{this.props.navigation.navigate("Home")}} round uppercase color={"#50C7C7"}>Login</Button>
+                     placeholder="password" password viewPass 
+					 onChangeText={text => this.onChangePassword(text)}
+      				 
+					  />
+					 <Button onPress={()=>{this.signup()}} round uppercase color={"#50C7C7"}>Sign Up</Button>
+
+					 <Input color={theme.COLORS.INFO} 
+					 value={this.state.confirmationCode}
+                     style={{ borderColor: theme.COLORS.INFO }} 
+                     placeholder="confirmation code" viewPass 
+					 onChangeText={text => this.onChangeCode(text)}
+      				 
+					  />
+					 <Button onPress={()=>{this.confirmSignUp()}} round uppercase color={"#50C7C7"}>Confirm Email</Button>
                      
-                     <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Signup')}} style={{paddingVertical: theme.SIZES.BASE}}>
-                        <Text h5 color={"#50C7C7"}>Create Account</Text>
-                     </TouchableOpacity>
                 </Block>
 			</View>
 			</ImageBackground>

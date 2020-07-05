@@ -1,0 +1,27 @@
+{
+    "api": {
+        "mymaxes": {
+            "service": "AppSync",
+            "providerPlugin": "awscloudformation",
+            "output": {
+                "authConfig": {
+                    "additionalAuthenticationProviders": [],
+                    "defaultAuthentication": {
+                        "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+                        "userPoolConfig": {
+                            "userPoolId": "authmymaxes2ea1bcdf"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "auth": {
+        "mymaxes2ea1bcdf": {
+            "service": "Cognito",
+            "providerPlugin": "awscloudformation",
+            "dependsOn": [],
+            "customAuth": false
+        }
+    }
+}

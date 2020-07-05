@@ -4,34 +4,24 @@ import { Animated, Easing, ImageBackground,
 	View } from "react-native"
 import {Input,Text,theme,Button,Block} from 'galio-framework'
 const { height, width } = Dimensions.get('screen');
-
+import Amplify, {Auth} from "aws-amplify";
 export default class LoginScreen extends React.Component {
 
 	static navigationOptions = ({ navigation }) => {
-	
 		const { params = {} } = navigation.state
-		return {
-				header: null,
-				headerLeft: null,
-				headerRight: null,
-			}
+		return { header: null, headerLeft: null,headerRight: null,}
 	}
-
+	state={
+		password:'',
+		email:'',
+	}
 	constructor(props) {
 		super(props)
 		this.state = {
 			group33ViewScale: new Animated.Value(-1),
-			group33ViewOpacity: new Animated.Value(-1),
-		}
-	}
-
-	componentDidMount() {
-	
-		this.startAnimationOne()
-	}
-
+			group33ViewOpacity: new Animated.Value(-1),}}
+	componentDidMount() { this.startAnimationOne()}
 	startAnimationOne() {
-	
 		// Set animation initial values to all animated properties
 		this.state.group33ViewScale.setValue(0)
 		this.state.group33ViewOpacity.setValue(0)
@@ -47,15 +37,34 @@ export default class LoginScreen extends React.Component {
 			toValue: 1,
 		})])]).start()
 	}
-
+	onChangeEmail(text){
+		this.setState({
+			email:text
+		})
+		console.log(this.state.email)
+	}
+	onChangePassword(text){
+		this.setState({
+			password:text
+		})
+		console.log(this.state.password)
+	}
+	signin(){
+		const {email,password} = this.state;
+		Auth.signIn(email,password)
+		.then(()=> {
+			console.log('succesful signed in')
+			this.props.navigation.navigate("Home")
+		})
+		.catch(err => console.log('error confirming sign in',err))
+	}
 	render() {
-	
 		return (
 			<ImageBackground
 			source={require('../../assets/images/Auth/Authback.png')}
 			style={styles.image}
 			>
-				<View style={{flex:1}}>
+			<View style={{flex:1}}>
 				<View
 					pointerEvents="box-none"
 					style={{
@@ -92,14 +101,19 @@ export default class LoginScreen extends React.Component {
                     paddingVertical: theme.SIZES.BASE,
                     justifyContent: 'flex-end',
                     marginBottom: 25}}>
-                <Input placeholder="username" color={theme.COLORS.INFO} 
-                    style={{ borderColor: theme.COLORS.INFO }} 
-                    placeholderTextColor={theme.COLORS.INFO}
-                    />
-                    <Input color={theme.COLORS.INFO} 
-                     style={{ borderColor: theme.COLORS.INFO }} 
-                     placeholder="password" password viewPass />
-                     <Button onPress={()=>{this.props.navigation.navigate("Home")}} round uppercase color={"#50C7C7"}>Login</Button>
+				<Input 
+					placeholder="email" color={theme.COLORS.INFO} 
+					onChangeText={text => this.onChangeEmail(text)}
+					style={{ borderColor: theme.COLORS.INFO }} 
+					placeholderTextColor={theme.COLORS.INFO}
+                />
+				<Input 
+					color={theme.COLORS.INFO} 
+					 style={{ borderColor: theme.COLORS.INFO }} 
+					 onChangeText={text => this.onChangePassword(text)}
+                     placeholder="password" password viewPass 
+				/>
+                     <Button onPress={()=>{this.signin()}} round uppercase color={"#50C7C7"}>Login</Button>
                      
                      <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Signup')}} style={{paddingVertical: theme.SIZES.BASE}}>
                         <Text h5 color={"#50C7C7"}>Create Account</Text>

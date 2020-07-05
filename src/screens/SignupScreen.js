@@ -9,19 +9,18 @@ import { bindActionCreators } from 'redux';
 
 class SignupScreen extends Component {
     static navigationOptions = ({ navigation }) => {
-		state={
-			username:'',
-			password:'',
-			email:'',
-			confirmationCode:'',
-		}
-	
 		const { params = {} } = navigation.state
 		return {
 				header: null,
 				headerLeft: null,
 				headerRight: null,
 			}
+	}
+	state={
+		username:'',
+		password:'',
+		email:'',
+		confirmationCode:'',
 	}
 	signup(){
 		Auth.signUp({

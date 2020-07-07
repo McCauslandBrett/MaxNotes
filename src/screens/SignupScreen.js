@@ -6,7 +6,8 @@ import {Input,Text,theme,Button,Block} from 'galio-framework'
 const { height, width } = Dimensions.get('screen');
 import Amplify, {Auth} from "aws-amplify";
 import { bindActionCreators } from 'redux';
-
+import {API,graphqlOperation} from 'aws-amplify'
+import {createMaxes} from '../graphql/mutations'
 class SignupScreen extends Component {
     static navigationOptions = ({ navigation }) => {
 		const { params = {} } = navigation.state
@@ -22,6 +23,7 @@ class SignupScreen extends Component {
 		email:'',
 		confirmationCode:'',
 	}
+
 	signup(){
 		Auth.signUp({
 			email:this.state.email,
@@ -34,6 +36,16 @@ class SignupScreen extends Component {
 	confirmSignUp() {
 		Auth.confirmSignUp(this.state.email,this.state.confirmationCode)
 		.then(()=> {console.log('succesful confirm sign up')
+		const maxes = {
+			id:'',
+			email: this.state.email,
+			bench: '',
+			squat:'',
+			deadlift:'',
+			clean:'',
+			snatch:'',
+		}
+		createMaxes();
 		this.props.navigation.navigate("Home")
 		})
 		.catch(err => console.log('error confirmation signup',err))

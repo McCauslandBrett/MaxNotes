@@ -12,9 +12,59 @@ import { connect } from 'react-redux'
 import {updateSquat,updateDeadlift,updateBench,
           updateClean,updateSnatch} from "../actions/maxes"
 import { bindActionCreators } from 'redux'
+import {API,graphqlOperation} from 'aws-amplify'
+import {createMaxes,updateMaxes} from '../graphql/mutations'
+import {getMaxes} from '../graphql/queries'
+
 
 
 class HomeScreen extends Component {
+   
+  async init () {
+    const weakguy = {
+      email:"tariqu@gmail.com",
+      id:"tariqu@gmail.com",
+      squat:"200",
+      bench:"125",
+      snatch:"125",
+      clean:"100"
+    }
+    try{
+      await API.graphql(graphqlOperation(createMaxes,{input:weakguy}))
+      console.log('added')
+    } catch(err){
+      console.log('error adding tariqs maxes maybe to weak?')
+    }
+  }
+  async fetchMaxes(){
+    try{
+      const maxes = await API.graphql(graphqlOperation(getMaxes,{id:"tariqu@gmail.com"}))
+      console.log('maxes:',maxes)
+    }
+    catch{
+      console.log('error getting tariqs maxes maybe to weak?')
+    }
+    
+  }
+  async changeMaxes(){
+    const weakerguy = {
+      
+      id:"tariqu@gmail.com",
+      squat:"2200",
+    }
+    try{
+      await API.graphql(graphqlOperation(updateMaxes,{input:weakerguy}))
+      console.log('updated')
+    } catch(err){
+      console.log('error updateing tariqs maxes')
+    }
+  }
+  componentDidMount(){
+    // this.init()
+    // this.fetchMaxes()
+    this.changeMaxes()
+
+   }
   state={
         visible:false
       };

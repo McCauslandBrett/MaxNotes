@@ -48,7 +48,6 @@ class HomeScreen extends Component {
   }
   async changeMaxes(){
     const weakerguy = {
-      
       id:"tariqu@gmail.com",
       squat:"2200",
     }
@@ -68,7 +67,7 @@ class HomeScreen extends Component {
   state={
         visible:false
       };
-      toggleOverlay = () =>{
+      toggleOverlay(){
         this.setState({
           visible:!this.state.visible
         });

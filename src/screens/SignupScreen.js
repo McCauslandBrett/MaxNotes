@@ -8,7 +8,10 @@ import Amplify, {Auth} from "aws-amplify";
 import { bindActionCreators } from 'redux';
 import {API,graphqlOperation} from 'aws-amplify'
 import {createMaxes} from '../graphql/mutations'
+import QModal from "rn-qmodal";
+
 class SignupScreen extends Component {
+
     static navigationOptions = ({ navigation }) => {
 		const { params = {} } = navigation.state
 		return {
@@ -17,40 +20,53 @@ class SignupScreen extends Component {
 				headerRight: null,
 			}
 	}
+	async init () {
+		const newlist = {
+		  email:this.state.email,
+		  id:this.state.email,
+		  deadlift:null,
+		  squat:null,
+		  bench:null,
+		  snatch:null,
+		  clean:null
+		}
+		try{
+		  await API.graphql(graphqlOperation(createMaxes,{input:newlist}))
+		  console.log('added')
+		} catch(err){
+		  console.log('error adding tariqs maxes maybe to weak?')
+		}
+	  }	
 	state={
+		visible:false,
 		username:'',
 		password:'',
 		email:'',
 		confirmationCode:'',
 	}
-
 	signup(){
 		Auth.signUp({
 			email:this.state.email,
 			username:this.state.email,
 			password:this.state.password
 		})
-		.then(()=> {console.log('signed up')})
+		.then(()=> {
+			console.log('signed up')
+			this.toggleOverlay()
+		
+		})
 		.catch(err => console.log('error sign up',err))
 	}
+	
 	confirmSignUp() {
 		Auth.confirmSignUp(this.state.email,this.state.confirmationCode)
-		.then(()=> {console.log('succesful confirm sign up')
-		const maxes = {
-			id:'',
-			email: this.state.email,
-			bench: '',
-			squat:'',
-			deadlift:'',
-			clean:'',
-			snatch:'',
-		}
-		createMaxes();
-		this.props.navigation.navigate("Home")
+		.then(()=> {
+			console.log('succesful confirm sign up')
+			this.init()
+			this.props.navigation.navigate("Home")
 		})
 		.catch(err => console.log('error confirmation signup',err))
 	}
-
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -58,17 +74,16 @@ class SignupScreen extends Component {
 			group33ViewOpacity: new Animated.Value(-1),
 		}
 	}
-
-	componentDidMount() {
-		this.startAnimationOne()
-	}
-
+	toggleOverlay(){
+		this.setState({
+		  visible:!this.state.visible
+		});
+	  }
+	componentDidMount() { this.startAnimationOne()}
 	startAnimationOne() {
-	
 		// Set animation initial values to all animated properties
 		this.state.group33ViewScale.setValue(0)
 		this.state.group33ViewOpacity.setValue(0)
-		
 		// Configure animation and trigger
 		Animated.parallel([Animated.parallel([Animated.timing(this.state.group33ViewScale, {
 			duration: 1000,
@@ -92,10 +107,7 @@ class SignupScreen extends Component {
 		})
 		console.log(this.state.password)
 	}
-	onChangeCode(text){
-		this.setState({
-			confirmationCode:text
-		})
+	onChangeCode(text){ this.setState({ confirmationCode:text})
 		console.log(this.state.confirmationCode)
 	}
     render() {
@@ -104,6 +116,26 @@ class SignupScreen extends Component {
 			source={require('../../assets/images/Auth/Authback.png')}
 			style={styles.image}
 			>
+			<QModal
+				animation={'fade'}
+          		card center full backdrop
+				visible={this.state.visible}
+				toggle={() => {this.toggleOverlay()}}
+         	>	
+			 <Block center>
+			 	<Input color={theme.COLORS.INFO} 
+					value={this.state.confirmationCode}
+                     style={{ alignItems: 'center',borderColor: theme.COLORS.INFO }} 
+                     placeholder="confirmation code" viewPass 
+					 onChangeText={text => this.onChangeCode(text)}
+      				 
+			 	/>
+				<Button onPress={()=>{this.confirmSignUp()}} 
+				round uppercase color={"#50C7C7"}>Confirm Email</Button>
+			 </Block>
+			  
+			 	
+			 </QModal>
 				<View style={{flex:1}}>
 				<View
 					pointerEvents="box-none"
@@ -143,7 +175,6 @@ class SignupScreen extends Component {
                     marginBottom: 25}}>
 
 					<Input placeholder="email" 
-				
 					color={theme.COLORS.INFO} 
                     style={{ borderColor: theme.COLORS.INFO }} 
 					placeholderTextColor={theme.COLORS.INFO}
@@ -155,19 +186,8 @@ class SignupScreen extends Component {
                      style={{ borderColor: theme.COLORS.INFO }} 
                      placeholder="password" password viewPass 
 					 onChangeText={text => this.onChangePassword(text)}
-      				 
 					  />
-					 <Button onPress={()=>{this.signup()}} round uppercase color={"#50C7C7"}>Sign Up</Button>
-
-					 <Input color={theme.COLORS.INFO} 
-					 value={this.state.confirmationCode}
-                     style={{ borderColor: theme.COLORS.INFO }} 
-                     placeholder="confirmation code" viewPass 
-					 onChangeText={text => this.onChangeCode(text)}
-      				 
-					  />
-					 <Button onPress={()=>{this.confirmSignUp()}} round uppercase color={"#50C7C7"}>Confirm Email</Button>
-                     
+					 <Button onPress={()=>{this.signup()}} round uppercase color={"#50C7C7"}>Sign Up</Button>                     
                 </Block>
 			</View>
 			</ImageBackground>

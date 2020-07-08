@@ -9,8 +9,9 @@ import { bindActionCreators } from 'redux';
 import {API,graphqlOperation} from 'aws-amplify'
 import {createMaxes} from '../graphql/mutations'
 import QModal from "rn-qmodal";
-
+import {updateEmail} from "../actions/maxes"
 class SignupScreen extends Component {
+	
 
     static navigationOptions = ({ navigation }) => {
 		const { params = {} } = navigation.state
@@ -21,30 +22,20 @@ class SignupScreen extends Component {
 			}
 	}
 	async init () {
+		console.log('init email 1',this.state.email)
 		const newlist = {
 		  email:this.state.email,
 		  id:this.state.email,
-		  deadlift:null,
-		  squat:null,
-		  bench:null,
-		  snatch:null,
-		  clean:null
 		}
 		try{
 		  await API.graphql(graphqlOperation(createMaxes,{input:newlist}))
 		  console.log('added')
+		  this.props.updateEmail(this.state.email)
 		} catch(err){
-		  console.log('error adding tariqs maxes maybe to weak?')
+		  console.log('error adding new user to DynamoDB?')
 		}
 	  }	
-	state={
-		visible:false,
-		username:'',
-		password:'',
-		email:'',
-		confirmationCode:'',
-	}
-	signup(){
+	signup = ()=>{
 		Auth.signUp({
 			email:this.state.email,
 			username:this.state.email,
@@ -53,9 +44,11 @@ class SignupScreen extends Component {
 		.then(()=> {
 			console.log('signed up')
 			this.toggleOverlay()
-		
 		})
-		.catch(err => console.log('error sign up',err))
+		.catch(err => {
+			if(err.code=="UsernameExistsException"){ this.toggleOverlay()}
+			else{ console.log('error sign up',err)}
+		})
 	}
 	
 	confirmSignUp() {
@@ -69,7 +62,13 @@ class SignupScreen extends Component {
 	}
 	constructor(props) {
 		super(props)
+		this.toggleOverlay = this.toggleOverlay.bind(this);
 		this.state = {
+			visible:false,
+			username:'',
+			password:'',
+			email:'',
+			confirmationCode:'',
 			group33ViewScale: new Animated.Value(-1),
 			group33ViewOpacity: new Animated.Value(-1),
 		}
@@ -120,7 +119,7 @@ class SignupScreen extends Component {
 				animation={'fade'}
           		card center full backdrop
 				visible={this.state.visible}
-				toggle={() => {this.toggleOverlay()}}
+				toggle={this.toggleOverlay}
          	>	
 			 <Block center>
 			 	<Input color={theme.COLORS.INFO} 
@@ -197,13 +196,12 @@ class SignupScreen extends Component {
 
 const mapStateToProps = (state) => {
     return{
-        user:state.user,
-        maxes:state.maxes,
+        maxes:state,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return bindActionCreators({})
+    return bindActionCreators({updateEmail})
 }
 const styles = StyleSheet.create({
 	image: {

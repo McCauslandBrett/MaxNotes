@@ -12,6 +12,7 @@ import { connect } from 'react-redux'
 import {updateSquat,updateDeadlift,updateBench,
           updateClean,updateSnatch} from "../actions/maxes"
 import { bindActionCreators } from 'redux'
+
 import {API,graphqlOperation} from 'aws-amplify'
 import {createMaxes,updateMaxes} from '../graphql/mutations'
 import {getMaxes} from '../graphql/queries'
@@ -46,22 +47,22 @@ class HomeScreen extends Component {
     }
     
   }
-  async changeMaxes(){
-    const weakerguy = {
-      id:"tariqu@gmail.com",
-      squat:"2200",
-    }
+  async saveMaxes(){
+   
     try{
-      await API.graphql(graphqlOperation(updateMaxes,{input:weakerguy}))
+      console.log("save:",this.props.maxes)
+      await API.graphql(graphqlOperation(updateMaxes,{input:this.props.maxes}))
       console.log('updated')
     } catch(err){
       console.log('error updateing tariqs maxes')
     }
   }
   componentDidMount(){
+    console.log('Home email:',this.props.maxes.email)
+    console.log('Home ID:',this.props.maxes.id)
     // this.init()
     // this.fetchMaxes()
-    this.changeMaxes()
+    // this.changeMaxes()
 
    }
   state={
@@ -89,7 +90,7 @@ class HomeScreen extends Component {
         <Text style={{fontFamily: "Base02",fontSize: 30}}>Squat</Text>
         <TextInput
           style={{fontFamily: "Base02",fontSize: 30}}
-          value = {this.props.maxes.squat}
+          value = {this.props.squat}
           onChangeText = {input => this.props.updateSquat(input)}
           placeholder = '0'
           placeholderTextColor= 'gray'
@@ -98,7 +99,7 @@ class HomeScreen extends Component {
        <Block row space={'evenly'} style={{marginVertical:20}}>
         <Text style={{fontFamily: "Base02",fontSize: 30}}>Deadlift</Text>
         <TextInput
-          value = {this.props.maxes.deadlift}
+          value = {this.props.deadlift}
           onChangeText = {input => this.props.updateDeadlift(input)}
           placeholder = '0'
           placeholderTextColor= 'gray'
@@ -110,7 +111,7 @@ class HomeScreen extends Component {
         <Text style={{fontFamily: "Base02",fontSize: 30}}>Bench</Text>
         <TextInput
           style={{fontFamily: "Base02",fontSize: 30}}
-          value = {this.props.maxes.bench}
+          value = {this.props.bench}
           onChangeText = {input => this.props.updateBench(input)}
           placeholder = '0'
           placeholderTextColor= 'gray'
@@ -121,7 +122,7 @@ class HomeScreen extends Component {
         <Text style={{fontFamily: "Base02",fontSize: 30}}>Clean</Text>
         <TextInput
           style={{fontFamily: "Base02",fontSize: 30}}
-          value = {this.props.maxes.clean}
+          value = {this.props.clean}
           onChangeText = {input => (console.log(this.props.maxes))}
           placeholder = '0'
           placeholderTextColor= 'gray'
@@ -132,7 +133,7 @@ class HomeScreen extends Component {
         <Text style={{fontFamily: "Base02",fontSize: 30}}>Snatch</Text>
         <TextInput
           style={{fontFamily: "Base02",fontSize: 30}}
-          value = {this.props.maxes.snatch}
+          value = {this.props.snatch}
           onChangeText = {input => this.props.updateSnatch(input)}
           placeholder = '0'
           placeholderTextColor= 'gray'
@@ -143,7 +144,7 @@ class HomeScreen extends Component {
        
       </Block>
       <Block middle center flex style={styles.bottom}>
-          <Button style={{marginVertical:20,alignContent:'center'}}
+          <Button onPress= {()=>{this.saveMaxes()}}style={{marginVertical:20,alignContent:'center'}}
                   round uppercase color={"#50C7C7"}>Save
           </Button>
        </Block>
@@ -155,11 +156,10 @@ class HomeScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    maxes:state.maxes,
+    maxes:state,
   }
   
 }
-
 const mapDispatchToProps =(dispatch) => {
   return bindActionCreators({updateSquat,updateDeadlift,updateBench,updateClean,updateSnatch},dispatch)
   

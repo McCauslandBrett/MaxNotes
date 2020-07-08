@@ -5,7 +5,10 @@ import { Animated, Easing, ImageBackground,
 import {Input,Text,theme,Button,Block} from 'galio-framework'
 const { height, width } = Dimensions.get('screen');
 import Amplify, {Auth} from "aws-amplify";
-export default class LoginScreen extends React.Component {
+import {updateEmail} from "../actions/maxes"
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+ class LoginScreen extends React.Component {
 
 	static navigationOptions = ({ navigation }) => {
 		const { params = {} } = navigation.state
@@ -53,7 +56,10 @@ export default class LoginScreen extends React.Component {
 		const {email,password} = this.state;
 		Auth.signIn(email,password)
 		.then(()=> {
-			console.log('succesful signed in')
+			
+			this.props.updateEmail(email)
+			console.log('succesful signed in, Email:', email)
+			// fetchMaxes(email)
 			this.props.navigation.navigate("Home")
 		})
 		.catch(err => console.log('error confirming sign in',err))
@@ -124,6 +130,17 @@ export default class LoginScreen extends React.Component {
 		);
 	}
 }
+const mapStateToProps = (state) => {
+	return {
+	  maxes:state,
+	}
+	
+  }
+  
+  const mapDispatchToProps =(dispatch) => {
+	return bindActionCreators({updateEmail},dispatch)
+	
+  }
 
 const styles = StyleSheet.create({
 	image: {
@@ -171,3 +188,4 @@ const styles = StyleSheet.create({
 		top: 0,
 	},
 })
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)

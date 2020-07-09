@@ -32,19 +32,29 @@ class SignupScreen extends Component {
 		}
 	  }	
 	signup = ()=>{
-		Auth.signUp({
-			email:this.state.email,
-			username:this.state.email,
-			password:this.state.password
-		})
-		.then(()=> {
-			console.log('signed up')
-			this.toggleOverlay()
-		})
-		.catch(err => {
-			if(err.code=="UsernameExistsException"){ this.toggleOverlay()}
-			else{ console.log('error sign up',err)}
-		})
+		if(this.state.email != '' && this.state.password != ''){
+			this.setState({
+				badinput:false
+			})
+			Auth.signUp({
+				email:this.state.email,
+				username:this.state.email,
+				password:this.state.password
+			})
+			.then(()=> {
+				console.log('signed up')
+				this.toggleOverlay()
+			})
+			.catch(err => {
+				if(err.code=="UsernameExistsException"){ this.toggleOverlay()}
+				else{ console.log('error sign up',err)}
+			})
+		} else{
+			this.setState({
+				badinput:true
+			})
+		}
+		
 	}
 	
 	confirmSignUp() {
@@ -61,6 +71,7 @@ class SignupScreen extends Component {
 		this.toggleOverlay = this.toggleOverlay.bind(this);
 		this.state = {
 			visible:false,
+			badinput:false,
 			username:'',
 			password:'',
 			email:'',
@@ -126,7 +137,7 @@ class SignupScreen extends Component {
       				 
 			 	/>
 				<Button onPress={()=>{this.confirmSignUp()}} 
-				round uppercase color={"#50C7C7"}>Confirm Email</Button>
+				round uppercase color={"#000"}>Confirm Email</Button>
 			 </Block>
 			  
 			 	
@@ -168,21 +179,20 @@ class SignupScreen extends Component {
                     paddingVertical: theme.SIZES.BASE,
                     justifyContent: 'flex-end',
                     marginBottom: 25}}>
-
 					<Input placeholder="email" 
-					color={theme.COLORS.INFO} 
-                    style={{ borderColor: theme.COLORS.INFO }} 
-					placeholderTextColor={theme.COLORS.INFO}
+					color={"#000"} 
+                    style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }}
+					
 					onChangeText={text => this.onChangeEmail(text)}
       				value={this.state.email}
                     />
 					<Input color={theme.COLORS.INFO} 
 					 value={this.state.password}
-                     style={{ borderColor: theme.COLORS.INFO }} 
+                     style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
                      placeholder="password" password viewPass 
 					 onChangeText={text => this.onChangePassword(text)}
 					  />
-					 <Button onPress={()=>{this.signup()}} round uppercase color={"#50C7C7"}>Sign Up</Button>                     
+					 <Button onPress={()=>{this.signup()}} round uppercase color={"#000"}>Sign Up</Button>                     
                 </Block>
 			</View>
 			</ImageBackground>

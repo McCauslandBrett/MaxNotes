@@ -16,24 +16,24 @@ import {getMaxes} from '../graphql/queries'
 		const { params = {} } = navigation.state
 		return { header: null, headerLeft: null,headerRight: null,}
 	}
-	state={
-		password:'',
-		email:'',
-	}
 	async fetchMaxes(email){
 		try{
 		  const maxes = await API.graphql(graphqlOperation(getMaxes,{id:email}))
-		  const important = { email:email, id:maxes.data.getMaxes.id, 
+		 // strip wasnt working but should revisit this 
+		  const important = { 
+			  	email:email, 
+				id:maxes.data.getMaxes.id, 
 				bench:maxes.data.getMaxes.bench,
-				 clean:maxes.data.getMaxes.clean, 
-				 deadlift:maxes.data.getMaxes.deadlift,
-				 snatch:maxes.data.getMaxes.snatch,
-				 squat:maxes.data.getMaxes.squat
+				clean:maxes.data.getMaxes.clean, 
+				deadlift:maxes.data.getMaxes.deadlift,
+				snatch:maxes.data.getMaxes.snatch,
+				squat:maxes.data.getMaxes.squat
 				} 
-		  console.log('important:',important)
+		 //  Updates Redux store 
 		  this.props.login(important)
 		}
 		catch(err){
+		 // need to add a toast here  
 		  console.log('error getting maxes',err)
 		}
 		
@@ -41,6 +41,9 @@ import {getMaxes} from '../graphql/queries'
 	constructor(props) {
 		super(props)
 		this.state = {
+			password:'',
+			email:'',
+			badinput:false,
 			group33ViewScale: new Animated.Value(-1),
 			group33ViewOpacity: new Animated.Value(-1),}
 		}
@@ -72,14 +75,25 @@ import {getMaxes} from '../graphql/queries'
 	}
 	signin(){
 		const {email,password} = this.state;
-		Auth.signIn(email,password)
-		.then(()=> {
-			
-			this.props.updateEmail(email)
+		if(email != '' && password != ''){
+			this.setState({
+				badinput:false
+			})
+			Auth.signIn(email,password)
+			.then(()=> {
+			// this.props.updateEmail(email)
+			// Pretty sure email is updated anyways
+
+			// syncs redux and DynamoDB
 			this.fetchMaxes(email)
 			this.props.navigation.navigate("Home")
 		})
 		.catch(err => console.log('error confirming sign in',err))
+	  }
+	  else{
+		// Set Error State for text inputs
+		  this.setState({badinput:true})
+		}
 	}
 	render() {
 		return (
@@ -125,21 +139,21 @@ import {getMaxes} from '../graphql/queries'
                     justifyContent: 'flex-end',
                     marginBottom: 25}}>
 				<Input 
-					placeholder="email" color={theme.COLORS.INFO} 
+					placeholder="email" color={"#000"} 
 					onChangeText={text => this.onChangeEmail(text)}
-					style={{ borderColor: theme.COLORS.INFO }} 
-					placeholderTextColor={theme.COLORS.INFO}
+					style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
+					
                 />
 				<Input 
-					color={theme.COLORS.INFO} 
-					 style={{ borderColor: theme.COLORS.INFO }} 
+					color={"#000"} 
+					style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
 					 onChangeText={text => this.onChangePassword(text)}
                      placeholder="password" password viewPass 
 				/>
-                     <Button onPress={()=>{this.signin()}} round uppercase color={"#50C7C7"}>Login</Button>
+                     <Button onPress={()=>{this.signin()}} round uppercase color={"#000"}>Login</Button>
                      
                      <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Signup')}} style={{paddingVertical: theme.SIZES.BASE}}>
-                        <Text h5 color={"#50C7C7"}>Create Account</Text>
+                        <Text h5 color={"#000"}>Create Account</Text>
                      </TouchableOpacity>
                 </Block>
 			</View>

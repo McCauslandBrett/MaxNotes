@@ -1,9 +1,10 @@
-const INITIAL_MAXES = {};
-const INITIAL_USER ={};
-const INITIAL_STATE = {};
+const INITIAL_MAXES = {deadlift:'0',squat:'0',bench:'0',clean:'0',snatch:'0'};
+
 
 export default (state = INITIAL_MAXES, action) => {
     switch (action.type) {
+        case 'LOGIN':
+            return action.payload
         case 'DEAD':
             return {...state, deadlift: action.payload};
         case 'SQUAT':

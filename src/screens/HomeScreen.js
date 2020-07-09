@@ -12,41 +12,15 @@ import { connect } from 'react-redux'
 import {updateSquat,updateDeadlift,updateBench,
           updateClean,updateSnatch} from "../actions/maxes"
 import { bindActionCreators } from 'redux'
-
 import {API,graphqlOperation} from 'aws-amplify'
 import {createMaxes,updateMaxes} from '../graphql/mutations'
-import {getMaxes} from '../graphql/queries'
+// import {getMaxes} from '../graphql/queries'
 
 
 
 class HomeScreen extends Component {
    
-  async init () {
-    const weakguy = {
-      email:"tariqu@gmail.com",
-      id:"tariqu@gmail.com",
-      squat:"200",
-      bench:"125",
-      snatch:"125",
-      clean:"100"
-    }
-    try{
-      await API.graphql(graphqlOperation(createMaxes,{input:weakguy}))
-      console.log('added')
-    } catch(err){
-      console.log('error adding tariqs maxes maybe to weak?')
-    }
-  }
-  async fetchMaxes(){
-    try{
-      const maxes = await API.graphql(graphqlOperation(getMaxes,{id:"tariqu@gmail.com"}))
-      console.log('maxes:',maxes)
-    }
-    catch{
-      console.log('error getting tariqs maxes maybe to weak?')
-    }
-    
-  }
+  
   async saveMaxes(){
    
     try{
@@ -54,12 +28,14 @@ class HomeScreen extends Component {
       await API.graphql(graphqlOperation(updateMaxes,{input:this.props.maxes}))
       console.log('updated')
     } catch(err){
-      console.log('error updateing tariqs maxes')
+      console.log('error updateing maxes',err)
     }
   }
   componentDidMount(){
     console.log('Home email:',this.props.maxes.email)
     console.log('Home ID:',this.props.maxes.id)
+    console.log('Home maxes:',this.props.maxes)
+
     // this.init()
     // this.fetchMaxes()
     // this.changeMaxes()
@@ -90,55 +66,51 @@ class HomeScreen extends Component {
         <Text style={{fontFamily: "Base02",fontSize: 30}}>Squat</Text>
         <TextInput
           style={{fontFamily: "Base02",fontSize: 30}}
-          value = {this.props.squat}
+          value = {this.props.maxes.squat}
           onChangeText = {input => this.props.updateSquat(input)}
           placeholder = '0'
           placeholderTextColor= 'gray'
        />
        </Block>
+        <Block row space={'evenly'} style={{marginVertical:20}}>
+          <Text style={{fontFamily: "Base02",fontSize: 30}}>Deadlift</Text>
+          <TextInput
+            value = {this.props.maxes.deadlift}
+            onChangeText = {input => this.props.updateDeadlift(input)}
+            placeholder = '0'
+            placeholderTextColor= 'gray'
+            style={{fontFamily: "Base02",fontSize: 30}}
+        />
+       </Block>
+        <Block row space={'evenly'} style={{marginVertical:20}} >
+          <Text style={{fontFamily: "Base02",fontSize: 30}}>Bench</Text>
+          <TextInput
+            value = {this.props.maxes.bench}
+            onChangeText = {input => this.props.updateBench(input)}
+            placeholder = '0'
+            placeholderTextColor= 'gray'
+            style={{fontFamily: "Base02",fontSize: 30}}
+          />
+       </Block>
        <Block row space={'evenly'} style={{marginVertical:20}}>
-        <Text style={{fontFamily: "Base02",fontSize: 30}}>Deadlift</Text>
-        <TextInput
-          value = {this.props.deadlift}
-          onChangeText = {input => this.props.updateDeadlift(input)}
-          placeholder = '0'
-          placeholderTextColor= 'gray'
-          style={{fontFamily: "Base02",fontSize: 30}}
-       />
+          <Text style={{fontFamily: "Base02",fontSize: 30}}>Clean</Text>
+          <TextInput
+            style={{fontFamily: "Base02",fontSize: 30}}
+            value = {this.props.maxes.clean}
+            onChangeText = {input => this.props.updateClean(input)}
+            placeholder = '0'
+            placeholderTextColor= 'gray'
+          />
        </Block>
-
-       <Block row space={'evenly'} style={{marginVertical:20}} >
-        <Text style={{fontFamily: "Base02",fontSize: 30}}>Bench</Text>
-        <TextInput
-          style={{fontFamily: "Base02",fontSize: 30}}
-          value = {this.props.bench}
-          onChangeText = {input => this.props.updateBench(input)}
-          placeholder = '0'
-          placeholderTextColor= 'gray'
-       />
-       </Block>
-
-       <Block row space={'evenly'} style={{marginVertical:20}}>
-        <Text style={{fontFamily: "Base02",fontSize: 30}}>Clean</Text>
-        <TextInput
-          style={{fontFamily: "Base02",fontSize: 30}}
-          value = {this.props.clean}
-          onChangeText = {input => (console.log(this.props.maxes))}
-          placeholder = '0'
-          placeholderTextColor= 'gray'
-       />
-       </Block>
-
        <Block row space={'evenly'} style={{marginVertical:20}}>
         <Text style={{fontFamily: "Base02",fontSize: 30}}>Snatch</Text>
         <TextInput
           style={{fontFamily: "Base02",fontSize: 30}}
-          value = {this.props.snatch}
+          value = {this.props.maxes.snatch}
           onChangeText = {input => this.props.updateSnatch(input)}
           placeholder = '0'
           placeholderTextColor= 'gray'
        />
-
        </Block>
        
        

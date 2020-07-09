@@ -22,17 +22,13 @@ class SignupScreen extends Component {
 			}
 	}
 	async init () {
-		console.log('init email 1',this.state.email)
-		const newlist = {
-		  email:this.state.email,
-		  id:this.state.email,
-		}
+		console.log('init email 1:',this.state.email)
+		this.props.updateEmail(this.state.email)
 		try{
-		  await API.graphql(graphqlOperation(createMaxes,{input:newlist}))
+		  await API.graphql(graphqlOperation(createMaxes,{input:this.props.maxes}))
 		  console.log('added')
-		  this.props.updateEmail(this.state.email)
 		} catch(err){
-		  console.log('error adding new user to DynamoDB?')
+		  console.log(err)
 		}
 	  }	
 	signup = ()=>{
@@ -201,7 +197,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return bindActionCreators({updateEmail})
+    return bindActionCreators({updateEmail},dispatch)
 }
 const styles = StyleSheet.create({
 	image: {

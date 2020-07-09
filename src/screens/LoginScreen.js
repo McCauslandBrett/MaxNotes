@@ -5,9 +5,11 @@ import { Animated, Easing, ImageBackground,
 import {Input,Text,theme,Button,Block} from 'galio-framework'
 const { height, width } = Dimensions.get('screen');
 import Amplify, {Auth} from "aws-amplify";
-import {updateEmail} from "../actions/maxes"
+import {updateEmail,login} from "../actions/maxes"
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import {API,graphqlOperation} from 'aws-amplify'
+import {getMaxes} from '../graphql/queries'
  class LoginScreen extends React.Component {
 
 	static navigationOptions = ({ navigation }) => {
@@ -18,11 +20,30 @@ import { connect } from 'react-redux'
 		password:'',
 		email:'',
 	}
+	async fetchMaxes(email){
+		try{
+		  const maxes = await API.graphql(graphqlOperation(getMaxes,{id:email}))
+		  const important = { email:email, id:maxes.data.getMaxes.id, 
+				bench:maxes.data.getMaxes.bench,
+				 clean:maxes.data.getMaxes.clean, 
+				 deadlift:maxes.data.getMaxes.deadlift,
+				 snatch:maxes.data.getMaxes.snatch,
+				 squat:maxes.data.getMaxes.squat
+				} 
+		  console.log('important:',important)
+		  this.props.login(important)
+		}
+		catch(err){
+		  console.log('error getting maxes',err)
+		}
+		
+	  }
 	constructor(props) {
 		super(props)
 		this.state = {
 			group33ViewScale: new Animated.Value(-1),
-			group33ViewOpacity: new Animated.Value(-1),}}
+			group33ViewOpacity: new Animated.Value(-1),}
+		}
 	componentDidMount() { this.startAnimationOne()}
 	startAnimationOne() {
 		// Set animation initial values to all animated properties
@@ -43,14 +64,11 @@ import { connect } from 'react-redux'
 	onChangeEmail(text){
 		this.setState({
 			email:text
-		})
-		console.log(this.state.email)
-	}
+		})}
 	onChangePassword(text){
 		this.setState({
 			password:text
 		})
-		console.log(this.state.password)
 	}
 	signin(){
 		const {email,password} = this.state;
@@ -58,8 +76,7 @@ import { connect } from 'react-redux'
 		.then(()=> {
 			
 			this.props.updateEmail(email)
-			console.log('succesful signed in, Email:', email)
-			// fetchMaxes(email)
+			this.fetchMaxes(email)
 			this.props.navigation.navigate("Home")
 		})
 		.catch(err => console.log('error confirming sign in',err))
@@ -138,7 +155,7 @@ const mapStateToProps = (state) => {
   }
   
   const mapDispatchToProps =(dispatch) => {
-	return bindActionCreators({updateEmail},dispatch)
+	return bindActionCreators({updateEmail,login},dispatch)
 	
   }
 

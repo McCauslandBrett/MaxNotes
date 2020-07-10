@@ -1,7 +1,7 @@
 import React from "react"
 import { Animated, Easing, ImageBackground,
 	TouchableOpacity,Dimensions, StyleSheet, 
-	View } from "react-native"
+	View, ScrollView,KeyboardAvoidingView } from "react-native"
 import {Input,Text,theme,Button,Block} from 'galio-framework'
 const { height, width } = Dimensions.get('screen');
 import Amplify, {Auth} from "aws-amplify";
@@ -40,9 +40,17 @@ import {getMaxes} from '../graphql/queries'
 	  }
 	constructor(props) {
 		super(props)
+		if (
+			Platform.OS === "android" &&
+			UIManager.setLayoutAnimationEnabledExperimental
+		  ) {
+			UIManager.setLayoutAnimationEnabledExperimental(true);
+		  }
+		
 		this.state = {
 			password:'',
 			email:'',
+		
 			badinput:false,
 			group33ViewScale: new Animated.Value(-1),
 			group33ViewOpacity: new Animated.Value(-1),}
@@ -132,12 +140,14 @@ import {getMaxes} from '../graphql/queries'
 						<Text style={styles.myText}>MY</Text>
 					</View>
 				</Animated.View>
-				<Block middle center flex style={{  
-                    flex: 1,
+				
+				<Block style ={{alignItems:'center',flex:1,justifyContent: 'flex-end',}}>
+				<KeyboardAvoidingView style={{  
                     width: width - theme.SIZES.BASE * 2,
-                    paddingVertical: theme.SIZES.BASE,
-                    justifyContent: 'flex-end',
-                    marginBottom: 25}}>
+                    // paddingVertical: theme.SIZES.BASE,
+					//  justifyContent: 'flex-end',
+                    marginBottom: 15}} behavior='padding'>
+				
 				<Input 
 					placeholder="email" color={"#000"} 
 					onChangeText={text => this.onChangeEmail(text)}
@@ -145,17 +155,24 @@ import {getMaxes} from '../graphql/queries'
 					
                 />
 				<Input 
+					onFocus={()=>console.log('focus on password')}
 					color={"#000"} 
 					style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
 					 onChangeText={text => this.onChangePassword(text)}
                      placeholder="password" password viewPass 
 				/>
+				</KeyboardAvoidingView>
+
+				
                      <Button onPress={()=>{this.signin()}} round uppercase color={"#000"}>Login</Button>
                      
                      <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Signup')}} style={{paddingVertical: theme.SIZES.BASE}}>
                         <Text h5 color={"#000"}>Create Account</Text>
                      </TouchableOpacity>
                 </Block>
+				
+				
+				
 			</View>
 			</ImageBackground>
 		);

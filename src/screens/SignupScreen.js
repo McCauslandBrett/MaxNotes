@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { Animated,View, TouchableOpacity,Easing, ImageBackground, Dimensions, StyleSheet } from 'react-native'
+import { Animated,View, TouchableOpacity,Easing, 
+	ImageBackground, Dimensions, 
+	StyleSheet,KeyboardAvoidingView } from 'react-native'
 import { connect } from 'react-redux';
 import {Input,Text,theme,Button,Block} from 'galio-framework'
 // import {} from "../actions/maxes";
@@ -173,12 +175,12 @@ class SignupScreen extends Component {
 						<Text style={styles.myText}>MY</Text>
 					</View>
 				</Animated.View>
-				<Block middle center flex style={{  
-                    flex: 1,
+
+				<Block style={{ alignItems:'center',marginBottom: 25, flex: 1,justifyContent: 'flex-end',}}>
+				<KeyboardAvoidingView style={{  
                     width: width - theme.SIZES.BASE * 2,
-                    paddingVertical: theme.SIZES.BASE,
-                    justifyContent: 'flex-end',
-                    marginBottom: 25}}>
+                    marginBottom: 15}} behavior='padding'>
+
 					<Input placeholder="email" 
 					color={"#000"} 
                     style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }}
@@ -192,7 +194,8 @@ class SignupScreen extends Component {
                      placeholder="password" password viewPass 
 					 onChangeText={text => this.onChangePassword(text)}
 					  />
-					 <Button onPress={()=>{this.signup()}} round uppercase color={"#000"}>Sign Up</Button>                     
+					</KeyboardAvoidingView>
+					<Button onPress={()=>{this.signup()}} round uppercase color={"#000"}>Sign Up</Button>                     
                 </Block>
 			</View>
 			</ImageBackground>

@@ -12,6 +12,7 @@ import {API,graphqlOperation} from 'aws-amplify'
 import {createMaxes} from '../graphql/mutations'
 import QModal from "rn-qmodal";
 import {updateEmail} from "../actions/maxes"
+import { MaterialIcons } from '@expo/vector-icons';
 class SignupScreen extends Component {
 	
 
@@ -124,25 +125,32 @@ class SignupScreen extends Component {
 			source={require('../../assets/images/Auth/Authback.png')}
 			style={styles.image}
 			>
+	
 			<QModal
 				animation={'fade'}
           		card center full backdrop
 				visible={this.state.visible}
 				toggle={this.toggleOverlay}
          	>	
-			 <Block center>
+		
+			 {/* <Block flex space = {'between'}> */}
+			<TouchableOpacity onPress={()=> {this.toggleOverlay()}} style={{position:'absolute',marginTop:5,marginLeft:10}}>
+				<MaterialIcons name="close" size={35} color="black" />
+			</TouchableOpacity>
+			 
+
+			 	<Block style={{marginTop:30}}flex space = {'between'}>
+				 <Text h4>Check your email for a verification code</Text>
 			 	<Input color={theme.COLORS.INFO} 
-					value={this.state.confirmationCode}
-                     style={{ alignItems: 'center',borderColor: theme.COLORS.INFO }} 
+					 value={this.state.confirmationCode}
+                     style={{ alignItems: 'center',borderColor: "#000" }} 
                      placeholder="confirmation code" viewPass 
 					 onChangeText={text => this.onChangeCode(text)}
       				 
 			 	/>
-				<Button onPress={()=>{this.confirmSignUp()}} 
+				<Button style={{width: 315,height: 40}} onPress={()=>{this.confirmSignUp()}} 
 				round uppercase color={"#000"}>Confirm Email</Button>
-			 </Block>
-			  
-			 	
+				 </Block>
 			 </QModal>
 				<View style={{flex:1}}>
 				<View
@@ -184,8 +192,8 @@ class SignupScreen extends Component {
 					<Input placeholder="email" 
 					color={"#000"} 
                     style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }}
-					
-					onChangeText={text => this.onChangeEmail(text)}
+					autoCapitalize = 'none'
+					onChangeText={text => this.onChangeEmail(text.toLowerCase())}
       				value={this.state.email}
                     />
 					<Input color={theme.COLORS.INFO} 
@@ -195,7 +203,10 @@ class SignupScreen extends Component {
 					 onChangeText={text => this.onChangePassword(text)}
 					  />
 					</KeyboardAvoidingView>
-					<Button onPress={()=>{this.signup()}} round uppercase color={"#000"}>Sign Up</Button>                     
+					<Button onPress={()=>{this.signup()}} round uppercase color={"#000"}>Sign Up</Button>   
+					<TouchableOpacity onPress={()=>{this.props.navigation.navigate('Login')}} style={{paddingVertical: theme.SIZES.BASE}}>
+                        <Text h5 bold color={"#000"}>Sign-in</Text>
+                     </TouchableOpacity>                  
                 </Block>
 			</View>
 			</ImageBackground>

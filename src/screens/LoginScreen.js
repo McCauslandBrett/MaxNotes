@@ -40,12 +40,6 @@ import {getMaxes} from '../graphql/queries'
 	  }
 	constructor(props) {
 		super(props)
-		if (
-			Platform.OS === "android" &&
-			UIManager.setLayoutAnimationEnabledExperimental
-		  ) {
-			UIManager.setLayoutAnimationEnabledExperimental(true);
-		  }
 		
 		this.state = {
 			password:'',
@@ -144,13 +138,12 @@ import {getMaxes} from '../graphql/queries'
 				<Block style ={{alignItems:'center',flex:1,justifyContent: 'flex-end',}}>
 				<KeyboardAvoidingView style={{  
                     width: width - theme.SIZES.BASE * 2,
-                    // paddingVertical: theme.SIZES.BASE,
-					//  justifyContent: 'flex-end',
                     marginBottom: 15}} behavior='padding'>
 				
 				<Input 
 					placeholder="email" color={"#000"} 
-					onChangeText={text => this.onChangeEmail(text)}
+					autoCapitalize = 'none'
+					onChangeText={text => this.onChangeEmail(text.toLowerCase())}
 					style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
 					
                 />
@@ -167,12 +160,9 @@ import {getMaxes} from '../graphql/queries'
                      <Button onPress={()=>{this.signin()}} round uppercase color={"#000"}>Login</Button>
                      
                      <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Signup')}} style={{paddingVertical: theme.SIZES.BASE}}>
-                        <Text h5 color={"#000"}>Create Account</Text>
+                        <Text h5 bold color={"#000"}>Create Account</Text>
                      </TouchableOpacity>
-                </Block>
-				
-				
-				
+                </Block>	
 			</View>
 			</ImageBackground>
 		);

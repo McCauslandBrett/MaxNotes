@@ -8,6 +8,9 @@ export const updateSquat = (value) => {
 export const login = (value) => {
     return {type:'LOGIN',payload:value}
 }
+export const logout = () => {
+    return {type:'LOGOUT'}
+}
 export const updateDeadlift = (value) => {
     return {type:'DEAD',payload:value}
 }

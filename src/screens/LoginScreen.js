@@ -3,6 +3,7 @@ import { Animated, Easing, ImageBackground,
 	TouchableOpacity,Dimensions, StyleSheet, 
 	View, ScrollView,KeyboardAvoidingView } from "react-native"
 import {Input,Text,theme,Button,Block} from 'galio-framework'
+import Toast from 'react-native-root-toast';
 const { height, width } = Dimensions.get('screen');
 import Amplify, {Auth} from "aws-amplify";
 import {updateEmail,login} from "../actions/maxes"
@@ -42,14 +43,20 @@ import {getMaxes} from '../graphql/queries'
 		super(props)
 		
 		this.state = {
+			toastVisible:true,
+			isShow:true,
 			password:'',
 			email:'',
-		
 			badinput:false,
 			group33ViewScale: new Animated.Value(-1),
 			group33ViewOpacity: new Animated.Value(-1),}
 		}
 	componentDidMount() { this.startAnimationOne()}
+	setShow(){
+		this.setState({
+			isShow:!this.state.isShow
+		  });
+	}
 	startAnimationOne() {
 		// Set animation initial values to all animated properties
 		this.state.group33ViewScale.setValue(0)
@@ -83,14 +90,12 @@ import {getMaxes} from '../graphql/queries'
 			})
 			Auth.signIn(email,password)
 			.then(()=> {
-			// this.props.updateEmail(email)
-			// Pretty sure email is updated anyways
-
 			// syncs redux and DynamoDB
 			this.fetchMaxes(email)
 			this.props.navigation.navigate("Home")
 		})
 		.catch(err => console.log('error confirming sign in',err))
+
 	  }
 	  else{
 		// Set Error State for text inputs
@@ -103,6 +108,8 @@ import {getMaxes} from '../graphql/queries'
 			source={require('../../assets/images/Auth/Authback.png')}
 			style={styles.image}
 			>
+
+		
 			<View style={{flex:1}}>
 				<View
 					pointerEvents="box-none"
@@ -134,21 +141,21 @@ import {getMaxes} from '../graphql/queries'
 						<Text style={styles.myText}>MY</Text>
 					</View>
 				</Animated.View>
+
 				
 				<Block style ={{alignItems:'center',flex:1,justifyContent: 'flex-end',}}>
 				<KeyboardAvoidingView style={{  
                     width: width - theme.SIZES.BASE * 2,
                     marginBottom: 15}} behavior='padding'>
-				
+						
 				<Input 
 					placeholder="email" color={"#000"} 
 					autoCapitalize = 'none'
 					onChangeText={text => this.onChangeEmail(text.toLowerCase())}
 					style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
-					
+					value={this.state.email}
                 />
 				<Input 
-					onFocus={()=>console.log('focus on password')}
 					color={"#000"} 
 					style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
 					 onChangeText={text => this.onChangePassword(text)}

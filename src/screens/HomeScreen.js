@@ -10,10 +10,11 @@ import {theme,Text, Block, Button} from 'galio-framework'
 //redux
 import { connect } from 'react-redux'
 import {updateSquat,updateDeadlift,updateBench,
-          updateClean,updateSnatch} from "../actions/maxes"
+          updateClean,updateSnatch,logout} from "../actions/maxes"
 import { bindActionCreators } from 'redux'
 import {API,graphqlOperation} from 'aws-amplify'
 import {createMaxes,updateMaxes} from '../graphql/mutations'
+import { SimpleLineIcons } from '@expo/vector-icons';
 // import {getMaxes} from '../graphql/queries'
 
 
@@ -31,24 +32,19 @@ class HomeScreen extends Component {
       console.log('error updateing maxes',err)
     }
   }
+  logout(){
+    console.log('called logout')
+    // firebase.auth().signOut();
+    this.props.logout();
+    this.props.navigation.navigate("Login");
+  }
   componentDidMount(){
     console.log('Home email:',this.props.maxes.email)
     console.log('Home ID:',this.props.maxes.id)
     console.log('Home maxes:',this.props.maxes)
-
-    // this.init()
-    // this.fetchMaxes()
-    // this.changeMaxes()
-
    }
-  state={
-        visible:false
-      };
-      toggleOverlay(){
-        this.setState({
-          visible:!this.state.visible
-        });
-      }
+  state={visible:false};
+  toggleOverlay(){this.setState({visible:!this.state.visible});}
 
   render() {
     return (
@@ -56,9 +52,14 @@ class HomeScreen extends Component {
       source={require('../../assets/images/BackHome/homeback2.png')}
       style={styles.image}
       >
+        <TouchableOpacity style={{marginTop:15,marginLeft:15}} onPress={()=>{this.logout()}}>
+          <SimpleLineIcons name="logout" size={34} color="black" />
+        </TouchableOpacity>
         
-        <Block flex safearea style={styles.margins}>
-        <Block middle style={{marginVertical:20}}>
+        
+       
+
+        <Block middle style={{marginVertical:0}}>
           <Text style={{fontFamily: "Base02",fontSize: 70}}>Maxes</Text>
         </Block>
 
@@ -92,7 +93,7 @@ class HomeScreen extends Component {
             style={{fontFamily: "Base02",fontSize: 30}}
           />
        </Block>
-       <Block row space={'evenly'} style={{marginVertical:20}}>
+        <Block row space={'evenly'} style={{marginVertical:20}}>
           <Text style={{fontFamily: "Base02",fontSize: 30}}>Clean</Text>
           <TextInput
             style={{fontFamily: "Base02",fontSize: 30}}
@@ -102,7 +103,7 @@ class HomeScreen extends Component {
             placeholderTextColor= 'gray'
           />
        </Block>
-       <Block row space={'evenly'} style={{marginVertical:20}}>
+        <Block row space={'evenly'} style={{marginVertical:20}}>
         <Text style={{fontFamily: "Base02",fontSize: 30}}>Snatch</Text>
         <TextInput
           style={{fontFamily: "Base02",fontSize: 30}}
@@ -112,12 +113,11 @@ class HomeScreen extends Component {
           placeholderTextColor= 'gray'
        />
        </Block>
-       
-       
-      </Block>
+  
+      
       <Block middle center flex style={styles.bottom}>
           <Button onPress= {()=>{this.saveMaxes()}}style={{marginVertical:20,alignContent:'center'}}
-                  round uppercase color={"#50C7C7"}>Save
+                  round uppercase color={"#000"}>Save
           </Button>
        </Block>
       </ImageBackground>
@@ -133,7 +133,7 @@ const mapStateToProps = (state) => {
   
 }
 const mapDispatchToProps =(dispatch) => {
-  return bindActionCreators({updateSquat,updateDeadlift,updateBench,updateClean,updateSnatch},dispatch)
+  return bindActionCreators({updateSquat,updateDeadlift,updateBench,updateClean,logout,updateSnatch},dispatch)
   
 }
 const styles = StyleSheet.create({

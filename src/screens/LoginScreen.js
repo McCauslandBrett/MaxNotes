@@ -47,7 +47,8 @@ import {getMaxes} from '../graphql/queries'
 			isShow:true,
 			password:'',
 			email:'',
-			badinput:false,
+			bademail:false,
+			badpassword:false,
 			group33ViewScale: new Animated.Value(-1),
 			group33ViewOpacity: new Animated.Value(-1),}
 		}
@@ -85,9 +86,7 @@ import {getMaxes} from '../graphql/queries'
 	signin(){
 		const {email,password} = this.state;
 		if(email != '' && password != ''){
-			this.setState({
-				badinput:false
-			})
+			this.setState({bademail:false,badpassword:false})
 			Auth.signIn(email,password)
 			.then(()=> {
 			// syncs redux and DynamoDB
@@ -99,7 +98,9 @@ import {getMaxes} from '../graphql/queries'
 	  }
 	  else{
 		// Set Error State for text inputs
-		  this.setState({badinput:true})
+		if(this.state.email == ''){this.setState({bademail:true})}
+		if(this.state.password == ''){this.setState({badpassword:true})}
+		
 		}
 	}
 	render() {
@@ -152,12 +153,12 @@ import {getMaxes} from '../graphql/queries'
 					placeholder="email" color={"#000"} 
 					autoCapitalize = 'none'
 					onChangeText={text => this.onChangeEmail(text.toLowerCase())}
-					style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
+					style={{ borderWidth:0.9,borderColor: this.state.bademail ? theme.COLORS.ERROR : "#000" }} 
 					value={this.state.email}
                 />
 				<Input 
 					color={"#000"} 
-					style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
+					style={{ borderWidth:0.9,borderColor: this.state.badpassword ? theme.COLORS.ERROR : "#000" }} 
 					 onChangeText={text => this.onChangePassword(text)}
                      placeholder="password" password viewPass 
 				/>

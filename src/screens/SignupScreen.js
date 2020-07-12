@@ -13,6 +13,7 @@ import {createMaxes} from '../graphql/mutations'
 import QModal from "rn-qmodal";
 import {updateEmail} from "../actions/maxes"
 import { MaterialIcons } from '@expo/vector-icons';
+// import { Ionicons } from '@expo/vector-icons'; 
 class SignupScreen extends Component {
 	
 	
@@ -38,9 +39,7 @@ class SignupScreen extends Component {
 
 	signup = ()=>{
 		if(this.state.email != '' && this.state.password != ''){
-			this.setState({
-				badinput:false
-			})
+			this.setState({bademail:false,badpassword:false})
 			Auth.signUp({
 				email:this.state.email,
 				username:this.state.email,
@@ -58,9 +57,9 @@ class SignupScreen extends Component {
 				else{ console.log('error sign up',err)}
 			})
 		} else{
-			this.setState({
-				badinput:true
-			})
+			if(this.state.email == ''){this.setState({bademail:true})}
+			if(this.state.password == ''){this.setState({badpassword:true})}
+			
 		}
 		
 	}
@@ -87,7 +86,9 @@ class SignupScreen extends Component {
 		this.toggleOverlay = this.toggleOverlay.bind(this);
 		this.state = {
 			visible:false,
-			badinput:false,
+			bademail:false,
+			badpassword:false,
+			
 			username:'',
 			password:'',
 			email:'',
@@ -131,6 +132,7 @@ class SignupScreen extends Component {
 		 </Block>
 	}
     render() {
+		
 		// const Confirmation=()=>{ 
 		// 	return(
 		// 	<Block> 
@@ -157,10 +159,13 @@ class SignupScreen extends Component {
 	
 	
         return (
+			
             <ImageBackground
 			source={require('../../assets/images/Auth/Authback.png')}
 			style={styles.image}
 			>
+				
+				
 	
 			<QModal
 				animation={'fade'}
@@ -225,14 +230,14 @@ class SignupScreen extends Component {
 
 					<Input placeholder="email" 
 					color={"#000"} 
-                    style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }}
+                    style={{ borderWidth:0.9,borderColor: this.state.bademail ? theme.COLORS.ERROR : "#000" }}
 					autoCapitalize = 'none'
 					onChangeText={text => this.onChangeEmail(text.toLowerCase())}
       				value={this.state.email}
                     />
 					<Input color={theme.COLORS.INFO} 
 					 value={this.state.password}
-                     style={{ borderWidth:0.9,borderColor: this.state.badinput ? theme.COLORS.ERROR : "#000" }} 
+                     style={{ borderWidth:0.9,borderColor: this.state.badpassword ? theme.COLORS.ERROR : "#000" }} 
                      placeholder="password" password viewPass 
 					 onChangeText={text => this.onChangePassword(text)}
 					  />

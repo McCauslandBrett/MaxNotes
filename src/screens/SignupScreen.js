@@ -1,13 +1,22 @@
 import React, { Component } from 'react'
-import { Animated,View, TouchableOpacity,Easing, ImageBackground, Dimensions, StyleSheet } from 'react-native'
+import { Animated,View, TouchableOpacity,Easing, 
+	ImageBackground, Dimensions, 
+	StyleSheet,KeyboardAvoidingView } from 'react-native'
 import { connect } from 'react-redux';
 import {Input,Text,theme,Button,Block} from 'galio-framework'
 // import {} from "../actions/maxes";
 const { height, width } = Dimensions.get('screen');
 import Amplify, {Auth} from "aws-amplify";
 import { bindActionCreators } from 'redux';
-
+import {API,graphqlOperation} from 'aws-amplify'
+import {createMaxes} from '../graphql/mutations'
+import QModal from "rn-qmodal";
+import {updateEmail} from "../actions/maxes"
+import { MaterialIcons } from '@expo/vector-icons';
+// import { Ionicons } from '@expo/vector-icons'; 
 class SignupScreen extends Component {
+	
+	
     static navigationOptions = ({ navigation }) => {
 		const { params = {} } = navigation.state
 		return {
@@ -16,47 +25,83 @@ class SignupScreen extends Component {
 				headerRight: null,
 			}
 	}
-	state={
-		username:'',
-		password:'',
-		email:'',
-		confirmationCode:'',
-	}
-	signup(){
-		Auth.signUp({
-			email:this.state.email,
-			username:this.state.email,
-			password:this.state.password
-		})
-		.then(()=> {console.log('signed up')})
-		.catch(err => console.log('error sign up',err))
-	}
-	confirmSignUp() {
-		Auth.confirmSignUp(this.state.email,this.state.confirmationCode)
-		.then(()=> {console.log('succesful confirm sign up')
-		this.props.navigation.navigate("Home")
-		})
-		.catch(err => console.log('error confirmation signup',err))
-	}
+	async init () {
+		this.props.updateEmail(this.state.email)
+		console.log('init maxes:',this.props.maxes)
+		try{
+		  await API.graphql(graphqlOperation(createMaxes,{input:this.props.maxes}))
+		  console.log('added')
+		  this.props.navigation.navigate("Home")
+		} catch(err){
+		  console.log(err)
+		}
+	  }	
 
+	signup = ()=>{
+		if(this.state.email != '' && this.state.password != ''){
+			this.setState({bademail:false,badpassword:false})
+			Auth.signUp({
+				email:this.state.email,
+				username:this.state.email,
+				password:this.state.password
+			}).then(()=> {
+				console.log('signup succesful')
+				//confirm email modal
+				this.toggleOverlay()
+			})
+			.catch(err => {
+				if(err.code=="UsernameExistsException"){ 
+					console.log('error sign up',err)
+					this.toggleOverlay()
+				}
+				else{ console.log('error sign up',err)}
+			})
+		} else{
+			if(this.state.email == ''){this.setState({bademail:true})}
+			if(this.state.password == ''){this.setState({badpassword:true})}
+			
+		}
+		
+	}
+	
+	confirmSignUp() {
+		
+		if(this.state.email !='' && this.state.confirmationCode != ''){
+			Auth.confirmSignUp(this.state.email,this.state.confirmationCode)
+		.then(()=> {
+			// if not confirmed yet and good code
+			console.log('succesful confirm email')
+			this.init()
+			
+		})
+		.catch(err => {
+			//if bad code or already confirmed user
+			console.log('error confirmation signup',err)
+			
+		})
+		}
+	}
 	constructor(props) {
 		super(props)
+		this.toggleOverlay = this.toggleOverlay.bind(this);
 		this.state = {
+			visible:false,
+			bademail:false,
+			badpassword:false,
+			
+			username:'',
+			password:'',
+			email:'',
+			confirmationCode:'',
 			group33ViewScale: new Animated.Value(-1),
 			group33ViewOpacity: new Animated.Value(-1),
 		}
 	}
-
-	componentDidMount() {
-		this.startAnimationOne()
-	}
-
-	startAnimationOne() {
 	
+	     startAnimationOne() {
 		// Set animation initial values to all animated properties
 		this.state.group33ViewScale.setValue(0)
 		this.state.group33ViewOpacity.setValue(0)
-		
 		// Configure animation and trigger
 		Animated.parallel([Animated.parallel([Animated.timing(this.state.group33ViewScale, {
 			duration: 1000,
@@ -68,30 +113,84 @@ class SignupScreen extends Component {
 			toValue: 1,
 		})])]).start()
 	}
-	onChangeEmail(text){
-		this.setState({
-			email:text
-		})
-		console.log(this.state.email)
-	}
-	onChangePassword(text){
-		this.setState({
-			password:text
-		})
-		console.log(this.state.password)
-	}
-	onChangeCode(text){
-		this.setState({
-			confirmationCode:text
-		})
-		console.log(this.state.confirmationCode)
+	toggleOverlay(){this.setState({visible:!this.state.visible});}
+	componentDidMount() { this.startAnimationOne()}
+	onChangeEmail(text){this.setState({email:text})}
+	onChangePassword(text){this.setState({password:text})}
+	onChangeCode(text){ this.setState({ confirmationCode:text})}
+	
+	needtosignin () {  
+		<Block>
+		<TouchableOpacity onPress={()=> {this.toggleOverlay()}} style={{position:'absolute',marginTop:5,marginLeft:10}}>
+		<MaterialIcons name="close" size={35} color="black" />
+		</TouchableOpacity>
+	 
+
+		 <Block style={{marginTop:30}}flex space = {'between'}>
+		 <Text h4>Account Already Exist Signin</Text>
+		 </Block>
+		 </Block>
 	}
     render() {
+		
+		// const Confirmation=()=>{ 
+		// 	return(
+		// 	<Block> 
+		// 		<TouchableOpacity onPress={()=> {this.toggleOverlay()}} style={{position:'absolute',marginTop:5,marginLeft:10}}>
+		// 			<MaterialIcons name="close" size={35} color="black" />
+		// 		</TouchableOpacity>
+		 
+		// 		 <Block style={{marginTop:30}}flex space = {'between'}>
+		// 			 <Text h4>Check your email for a verification code</Text>
+		// 			 <Input color={theme.COLORS.INFO} 
+		// 			 value={this.state.confirmationCode}
+		// 			 style={{ alignItems: 'center',borderColor: "#000" }} 
+		// 			 placeholder="confirmation code" viewPass 
+		// 			 onChangeText={text => this.onChangeCode(text)}
+				   
+		// 			 />
+		// 			<Button style={{width: 315,height: 40}} onPress={()=>{this.confirmSignUp()}} 
+		// 			round uppercase color={"#000"}>Confirm Email</Button>
+		// 		 </Block>
+		//   </Block>
+		// );
+		// }
+
+	
+	
         return (
+			
             <ImageBackground
 			source={require('../../assets/images/Auth/Authback.png')}
 			style={styles.image}
 			>
+				
+				
+	
+			<QModal
+				animation={'fade'}
+          		card center full backdrop
+				visible={this.state.visible}
+				toggle={this.toggleOverlay}
+         	>	
+			    <TouchableOpacity onPress={()=> {this.toggleOverlay()}} style={{position:'absolute',marginTop:5,marginLeft:10}}>
+					<MaterialIcons name="close" size={35} color="black" />
+				</TouchableOpacity>
+		 
+				 <Block style={{marginTop:30}}flex space = {'between'}>
+					 <Text h4>Check your email for a verification code</Text>
+					 <Input color={theme.COLORS.INFO} 
+					 value={this.state.confirmationCode}
+					 style={{ alignItems: 'center',borderColor: "#000" }} 
+					 placeholder="confirmation code" viewPass 
+					 onChangeText={text => this.onChangeCode(text)}
+				   
+					 />
+					<Button style={{width: 315,height: 40}} onPress={()=>{this.confirmSignUp()}} 
+					round uppercase color={"#000"}>Confirm Email</Button>
+				 </Block>
+		
+			 </QModal>
 				<View style={{flex:1}}>
 				<View
 					pointerEvents="box-none"
@@ -123,39 +222,30 @@ class SignupScreen extends Component {
 						<Text style={styles.myText}>MY</Text>
 					</View>
 				</Animated.View>
-				<Block middle center flex style={{  
-                    flex: 1,
+
+				<Block style={{ alignItems:'center', flex: 1,justifyContent: 'flex-end',}}>
+				<KeyboardAvoidingView style={{  
                     width: width - theme.SIZES.BASE * 2,
-                    paddingVertical: theme.SIZES.BASE,
-                    justifyContent: 'flex-end',
-                    marginBottom: 25}}>
+                    marginBottom: 15}} behavior='padding'>
 
 					<Input placeholder="email" 
-				
-					color={theme.COLORS.INFO} 
-                    style={{ borderColor: theme.COLORS.INFO }} 
-					placeholderTextColor={theme.COLORS.INFO}
-					onChangeText={text => this.onChangeEmail(text)}
+					color={"#000"} 
+                    style={{ borderWidth:0.9,borderColor: this.state.bademail ? theme.COLORS.ERROR : "#000" }}
+					autoCapitalize = 'none'
+					onChangeText={text => this.onChangeEmail(text.toLowerCase())}
       				value={this.state.email}
                     />
 					<Input color={theme.COLORS.INFO} 
 					 value={this.state.password}
-                     style={{ borderColor: theme.COLORS.INFO }} 
+                     style={{ borderWidth:0.9,borderColor: this.state.badpassword ? theme.COLORS.ERROR : "#000" }} 
                      placeholder="password" password viewPass 
 					 onChangeText={text => this.onChangePassword(text)}
-      				 
 					  />
-					 <Button onPress={()=>{this.signup()}} round uppercase color={"#50C7C7"}>Sign Up</Button>
-
-					 <Input color={theme.COLORS.INFO} 
-					 value={this.state.confirmationCode}
-                     style={{ borderColor: theme.COLORS.INFO }} 
-                     placeholder="confirmation code" viewPass 
-					 onChangeText={text => this.onChangeCode(text)}
-      				 
-					  />
-					 <Button onPress={()=>{this.confirmSignUp()}} round uppercase color={"#50C7C7"}>Confirm Email</Button>
-                     
+					</KeyboardAvoidingView>
+					<Button onPress={()=>{this.signup()}} round uppercase color={"#000"}>Sign Up</Button>   
+					<TouchableOpacity onPress={()=>{this.props.navigation.navigate('Login')}} style={{paddingVertical: theme.SIZES.BASE}}>
+                        <Text h5 bold color={"#000"}>Sign-in</Text>
+                     </TouchableOpacity>                  
                 </Block>
 			</View>
 			</ImageBackground>
@@ -165,13 +255,12 @@ class SignupScreen extends Component {
 
 const mapStateToProps = (state) => {
     return{
-        user:state.user,
-        maxes:state.maxes,
+        maxes:state,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return bindActionCreators({})
+    return bindActionCreators({updateEmail},dispatch)
 }
 const styles = StyleSheet.create({
 	image: {

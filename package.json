@@ -21,12 +21,14 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
     "react-native-gesture-handler": "~1.5.0",
     "react-native-reanimated": "~1.4.0",
+    "react-native-root-toast": "^3.2.1",
     "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "2.0.0-alpha.12",
     "react-navigation": "^4.1.0",
     "react-navigation-stack": "^2.0.16",
     "react-redux": "^7.2.0",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "rn-qmodal": "0.0.5"
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0",

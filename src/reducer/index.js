@@ -1,8 +1,12 @@
-const INITIAL_MAXES = {};
-const INITIAL_USER ={};
-import{combineReducers} from 'redux'
-const maxes = (state = INITIAL_MAXES, action) => {
+const INITIAL_MAXES = {deadlift:'0',squat:'0',bench:'0',clean:'0',snatch:'0'};
+const usersDefaultState = [];
+
+export default (state = INITIAL_MAXES, action) => {
     switch (action.type) {
+        case 'LOGIN':
+            return action.payload
+        case 'LOGOUT':
+            return usersDefaultState;
         case 'DEAD':
             return {...state, deadlift: action.payload};
         case 'SQUAT':
@@ -15,23 +19,9 @@ const maxes = (state = INITIAL_MAXES, action) => {
               return {...state, snatch:action.payload};
         case 'CLEAR':
               return INITIAL_MAXES;
+        case 'UPDATE_EMAIL':
+            return {...state,email:action.payload,id:action.payload}
         default:
             return state;
     }
 };
-const user = (state = INITIAL_USER, action) => {
-    switch (action.type) {
-        case 'LOGIN':
-            return {...state};
-        case 'SIGNUP':
-                return {...state};
-        default:
-            return state;
-    }
-};
-const rootReducer = combineReducers({
-    user,
-    maxes,
-   })
-   
-   export default rootReducer

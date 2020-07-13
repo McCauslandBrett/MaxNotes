@@ -11,11 +11,42 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {API,graphqlOperation} from 'aws-amplify'
 import {getMaxes} from '../graphql/queries'
+import QModal from "rn-qmodal";
+import { MaterialIcons } from '@expo/vector-icons';
+
+// Auth.forgotPassword(username)
+//     .then(data => console.log(data))
+//     .catch(err => console.log(err));
+
+// Collect confirmation code and new password, then
+// Auth.forgotPasswordSubmit(username, code, new_password)
+//     .then(data => console.log(data))
+//     .catch(err => console.log(err));
  class LoginScreen extends React.Component {
 
 	static navigationOptions = ({ navigation }) => {
 		const { params = {} } = navigation.state
 		return { header: null, headerLeft: null,headerRight: null,}
+	}
+	pressForgot(){ this.state.email != '' ? this.ResetPassword():this.setState({bademail:true})}
+	pressReset(){
+		if(this.state.email != '' && this.state.password != ''&& this.state.confirmationCode != ''){
+			//Collect confirmation code and new password, then
+			Auth.forgotPasswordSubmit(this.state.email, this.state.confirmationCode, this.state.password)
+			.then(data => {
+				console.log('reset password successful')
+				this.fetchMaxes(this.state.email)
+				this.props.navigation.navigate('Home')
+			})
+    		.catch(err => console.log(err));
+		}
+	}
+	ResetPassword(){
+		this.toggleOverlay()
+		//send code
+		Auth.forgotPassword(this.state.email)
+    	.then(data => {console.log('sent code')})
+    	.catch(err => {console.log('Error in ResetPassword',err)});
 	}
 	async fetchMaxes(email){
 		try{
@@ -43,8 +74,8 @@ import {getMaxes} from '../graphql/queries'
 		super(props)
 		
 		this.state = {
-			toastVisible:true,
-			isShow:true,
+			visible:false,
+			confirmationCode:'',
 			password:'',
 			email:'',
 			bademail:false,
@@ -52,17 +83,11 @@ import {getMaxes} from '../graphql/queries'
 			group33ViewScale: new Animated.Value(-1),
 			group33ViewOpacity: new Animated.Value(-1),}
 		}
+	onChangeCode(text){ this.setState({ confirmationCode:text})}
 	componentDidMount() { this.startAnimationOne()}
-	setShow(){
-		this.setState({
-			isShow:!this.state.isShow
-		  });
-	}
 	startAnimationOne() {
-		// Set animation initial values to all animated properties
 		this.state.group33ViewScale.setValue(0)
 		this.state.group33ViewOpacity.setValue(0)
-		
 		// Configure animation and trigger
 		Animated.parallel([Animated.parallel([Animated.timing(this.state.group33ViewScale, {
 			duration: 1000,
@@ -74,15 +99,9 @@ import {getMaxes} from '../graphql/queries'
 			toValue: 1,
 		})])]).start()
 	}
-	onChangeEmail(text){
-		this.setState({
-			email:text
-		})}
-	onChangePassword(text){
-		this.setState({
-			password:text
-		})
-	}
+	onChangeEmail(text){this.setState({email:text})}
+	onChangePassword(text){this.setState({password:text})}
+	toggleOverlay(){this.setState({visible:!this.state.visible})}
 	signin(){
 		const {email,password} = this.state;
 		if(email != '' && password != ''){
@@ -91,7 +110,7 @@ import {getMaxes} from '../graphql/queries'
 			.then(()=> {
 			// syncs redux and DynamoDB
 			this.fetchMaxes(email)
-			this.props.navigation.navigate("Home")
+			this.props.navigation.navigate('Home')
 		})
 		.catch(err => console.log('error confirming sign in',err))
 
@@ -109,6 +128,42 @@ import {getMaxes} from '../graphql/queries'
 			source={require('../../assets/images/Auth/Authback.png')}
 			style={styles.image}
 			>
+				<QModal
+				animation={'fade'}
+          		card center full backdrop
+				visible={this.state.visible}
+				toggle={this.toggleOverlay}
+         		>	
+			    <TouchableOpacity onPress={()=> {this.toggleOverlay()}} style={{position:'absolute',marginTop:5,marginLeft:10}}>
+					<MaterialIcons name="close" size={35} color="black" />
+				</TouchableOpacity>
+		 
+				 <Block style={{marginTop:10}}flex space = {'between'}>
+					 <Text h4>Check email for a verification code</Text>
+					 <Input color={theme.COLORS.INFO} 
+					 value={this.state.confirmationCode}
+					 style={{ alignItems: 'center',borderColor: "#000" }} 
+					 placeholder="confirmation code" viewPass 
+					 onChangeText={text => this.onChangeCode(text)}
+					/>
+					<Input 
+					placeholder="email" color={"#000"} 
+					autoCapitalize = 'none'
+					onChangeText={text => this.onChangeEmail(text.toLowerCase())}
+					style={{ borderWidth:0.9,borderColor:"#000" }} 
+					value={this.state.email}
+                  />
+				  	<Input 
+					color={"#000"} 
+					style={{ borderWidth:0.9,borderColor: this.state.badpassword ? theme.COLORS.ERROR : "#000" }} 
+					 onChangeText={text => this.onChangePassword(text)}
+                     placeholder="new password" password viewPass 
+				/>
+					<Button style={{width: 315,height: 40}} onPress={()=>{this.pressReset()}} 
+					round uppercase color={"#000"}>Reset</Button>
+				 </Block>
+		
+			 </QModal>
 
 		
 			<View style={{flex:1}}>
@@ -153,12 +208,12 @@ import {getMaxes} from '../graphql/queries'
 					placeholder="email" color={"#000"} 
 					autoCapitalize = 'none'
 					onChangeText={text => this.onChangeEmail(text.toLowerCase())}
-					style={{ borderWidth:0.9,borderColor: this.state.bademail ? theme.COLORS.ERROR : "#000" }} 
+					style={{ borderWidth:2.0,borderColor: this.state.bademail ? theme.COLORS.ERROR : "grey" }} 
 					value={this.state.email}
                 />
 				<Input 
 					color={"#000"} 
-					style={{ borderWidth:0.9,borderColor: this.state.badpassword ? theme.COLORS.ERROR : "#000" }} 
+					style={{ borderWidth:2.0,borderColor: this.state.badpassword ? theme.COLORS.ERROR : "grey" }} 
 					 onChangeText={text => this.onChangePassword(text)}
                      placeholder="password" password viewPass 
 				/>
@@ -166,10 +221,17 @@ import {getMaxes} from '../graphql/queries'
 
 				
                      <Button onPress={()=>{this.signin()}} round uppercase color={"#000"}>Login</Button>
-                     
-                     <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Signup')}} style={{paddingVertical: theme.SIZES.BASE}}>
-                        <Text h5 bold color={"#000"}>Create Account</Text>
+                     <Block row space={'between'}>
+					
+					 <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Signup')}} style={{paddingHorizontal:35,paddingVertical: theme.SIZES.BASE}}>
+                        <Text h6 bold color={"#000"}>Create Account</Text>
                      </TouchableOpacity>
+					 
+					 <TouchableOpacity onPress={()=>{this.pressForgot()}} style={{paddingHorizontal:35,paddingVertical: theme.SIZES.BASE}}>
+                        <Text h6 bold color={"#000"}>Forgot Password?</Text>
+                     </TouchableOpacity>
+					 </Block>
+                    
                 </Block>	
 			</View>
 			</ImageBackground>

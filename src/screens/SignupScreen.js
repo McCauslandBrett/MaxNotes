@@ -27,14 +27,10 @@ class SignupScreen extends Component {
 	}
 	async init () {
 		this.props.updateEmail(this.state.email)
-		console.log('init maxes:',this.props.maxes)
 		try{
 		  await API.graphql(graphqlOperation(createMaxes,{input:this.props.maxes}))
-		  console.log('added')
 		  this.props.navigation.navigate("Home")
-		} catch(err){
-		  console.log(err)
-		}
+		} catch(err){}
 	  }	
 
 	signup = ()=>{
@@ -44,42 +40,25 @@ class SignupScreen extends Component {
 				email:this.state.email,
 				username:this.state.email,
 				password:this.state.password
-			}).then(()=> {
-				console.log('signup succesful')
-				//confirm email modal
-				this.toggleOverlay()
-			})
+			}).then(()=> {this.toggleOverlay()})
 			.catch(err => {
-				if(err.code=="UsernameExistsException"){ 
-					console.log('error sign up',err)
-					this.toggleOverlay()
-				}
-				else{ console.log('error sign up',err)}
+				if(err.code=="UsernameExistsException"){ this.toggleOverlay()}
 			})
-		} else{
-			if(this.state.email == ''){this.setState({bademail:true})}
-			if(this.state.password == ''){this.setState({badpassword:true})}
-			
-		}
+			} else{
+				if(this.state.email == ''){this.setState({bademail:true})}
+				if(this.state.password == ''){this.setState({badpassword:true})}
+			}
 		
 	}
 	
 	confirmSignUp() {
-		
 		if(this.state.email !='' && this.state.confirmationCode != ''){
+			this.setState({badcode:false})
 			Auth.confirmSignUp(this.state.email,this.state.confirmationCode)
-		.then(()=> {
-			// if not confirmed yet and good code
-			console.log('succesful confirm email')
-			this.init()
-			
-		})
-		.catch(err => {
-			//if bad code or already confirmed user
-			console.log('error confirmation signup',err)
-			
-		})
+			.then(()=> { this.init()})
+			.catch(err => {})
 		}
+		else{ if(this.state.confirmationCode==''){this.setState({badcode:true})}}
 	}
 	constructor(props) {
 		super(props)
@@ -88,7 +67,7 @@ class SignupScreen extends Component {
 			visible:false,
 			bademail:false,
 			badpassword:false,
-			
+			badcode:false,
 			username:'',
 			password:'',
 			email:'',
@@ -179,9 +158,10 @@ class SignupScreen extends Component {
 		 
 				 <Block style={{marginTop:30}}flex space = {'between'}>
 					 <Text h4>Check your email for a verification code</Text>
-					 <Input color={theme.COLORS.INFO} 
-					 value={this.state.confirmationCode}
-					 style={{ alignItems: 'center',borderColor: "#000" }} 
+					 <Input 
+					 color={"#000"} 
+					 style={{ alignItems: 'center',borderWidth:2.0,borderColor: this.state.badecode ? theme.COLORS.ERROR : "grey" }} 
+					 value={this.state.confirmationCode} 
 					 placeholder="confirmation code" viewPass 
 					 onChangeText={text => this.onChangeCode(text)}
 				   
@@ -230,14 +210,14 @@ class SignupScreen extends Component {
 
 					<Input placeholder="email" 
 					color={"#000"} 
-                    style={{ borderWidth:0.9,borderColor: this.state.bademail ? theme.COLORS.ERROR : "#000" }}
+                    style={{ borderWidth:2.0,borderColor: this.state.bademail ? theme.COLORS.ERROR : "grey" }}
 					autoCapitalize = 'none'
 					onChangeText={text => this.onChangeEmail(text.toLowerCase())}
       				value={this.state.email}
                     />
-					<Input color={theme.COLORS.INFO} 
+					<Input color={"#000"} 
 					 value={this.state.password}
-                     style={{ borderWidth:0.9,borderColor: this.state.badpassword ? theme.COLORS.ERROR : "#000" }} 
+                     style={{ borderWidth:2.0,borderColor: this.state.badpassword ? theme.COLORS.ERROR : "grey" }} 
                      placeholder="password" password viewPass 
 					 onChangeText={text => this.onChangePassword(text)}
 					  />

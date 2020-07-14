@@ -23,26 +23,14 @@ class HomeScreen extends Component {
    
   
   async saveMaxes(){
-   
     try{
-      console.log("save:",this.props.maxes)
       await API.graphql(graphqlOperation(updateMaxes,{input:this.props.maxes}))
-      console.log('updated')
-    } catch(err){
-      console.log('error updateing maxes',err)
-    }
+    } catch(err){}
   }
   logout(){
-    console.log('called logout')
-    // firebase.auth().signOut();
     this.props.logout();
     this.props.navigation.navigate("Login");
   }
-  componentDidMount(){
-    console.log('Home email:',this.props.maxes.email)
-    console.log('Home ID:',this.props.maxes.id)
-    console.log('Home maxes:',this.props.maxes)
-   }
   state={visible:false};
   toggleOverlay(){this.setState({visible:!this.state.visible});}
 

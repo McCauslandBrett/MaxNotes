@@ -14,14 +14,6 @@ import {getMaxes} from '../graphql/queries'
 import QModal from "rn-qmodal";
 import { MaterialIcons } from '@expo/vector-icons';
 
-// Auth.forgotPassword(username)
-//     .then(data => console.log(data))
-//     .catch(err => console.log(err));
-
-// Collect confirmation code and new password, then
-// Auth.forgotPasswordSubmit(username, code, new_password)
-//     .then(data => console.log(data))
-//     .catch(err => console.log(err));
  class LoginScreen extends React.Component {
 
 	static navigationOptions = ({ navigation }) => {
@@ -34,19 +26,18 @@ import { MaterialIcons } from '@expo/vector-icons';
 			//Collect confirmation code and new password, then
 			Auth.forgotPasswordSubmit(this.state.email, this.state.confirmationCode, this.state.password)
 			.then(data => {
-				console.log('reset password successful')
 				this.fetchMaxes(this.state.email)
 				this.props.navigation.navigate('Home')
 			})
-    		.catch(err => console.log(err));
+    		.catch();
 		}
 	}
 	ResetPassword(){
 		this.toggleOverlay()
 		//send code
 		Auth.forgotPassword(this.state.email)
-    	.then(data => {console.log('sent code')})
-    	.catch(err => {console.log('Error in ResetPassword',err)});
+    	.then()
+    	.catch();
 	}
 	async fetchMaxes(email){
 		try{
@@ -65,8 +56,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 		  this.props.login(important)
 		}
 		catch(err){
-		 // need to add a toast here  
-		  console.log('error getting maxes',err)
+		
 		}
 		
 	  }
@@ -108,11 +98,10 @@ import { MaterialIcons } from '@expo/vector-icons';
 			this.setState({bademail:false,badpassword:false})
 			Auth.signIn(email,password)
 			.then(()=> {
-			// syncs redux and DynamoDB
 			this.fetchMaxes(email)
 			this.props.navigation.navigate('Home')
 		})
-		.catch(err => console.log('error confirming sign in',err))
+		.catch()
 
 	  }
 	  else{

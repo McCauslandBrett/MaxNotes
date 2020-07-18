@@ -21,11 +21,17 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.brettmccausland.MyMaxes",
+      "buildNumber": "1.0.0"
     },
-    "description": ""
+    "android": {
+      "package": "com.brettmccausland.MyMaxes",
+      "versionCode": 1
+    },
+    "description": "Save your personal best lift maxes"
   }
 }
